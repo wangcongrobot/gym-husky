@@ -26,6 +26,14 @@ def ctrl_set_action(sim, action):
     """
     if sim.model.nmocap > 0:
         _, action = np.split(action, (sim.model.nmocap * 7, ))
+        # print("ctrl_set_action: ", action)
+        # action=np.array([0., 0., 0., 0.])
+        # action = -0.5 * np.array([0.5, 0., 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
+        # action = -1.0 * np.array([0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
+        # action = np.array([0.5, 0.5, 0.5, 0.5])
+        print("ctrl_set_action", action)
+        print("ctrl_set_action.shape: ", action.shape)
+
     if sim.data.ctrl is not None:
         for i in range(action.shape[0]):
             if sim.model.actuator_biastype[i] == 0:
@@ -47,13 +55,18 @@ def mocap_set_action(sim, action):
     if sim.model.nmocap > 0:
         action, _ = np.split(action, (sim.model.nmocap * 7, ))
         action = action.reshape(sim.model.nmocap, 7)
+        print("mocap_set_action: ", action)
 
         pos_delta = action[:, :3]
         quat_delta = action[:, 3:]
+        # TEST POSITION
+        # pos_delta = [0, 0, 0]
+        # quat_delta = [0, 0.707, 0.707, 0]
 
         reset_mocap2body_xpos(sim)
         sim.data.mocap_pos[:] = sim.data.mocap_pos + pos_delta
         sim.data.mocap_quat[:] = sim.data.mocap_quat + quat_delta
+        print("real mocap position sim.data.mocap_pos: ", sim.data.mocap_pos)
 
 
 def reset_mocap_welds(sim):

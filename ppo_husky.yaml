@@ -1,0 +1,12 @@
+husky-ppo:
+  env: DualUR5HuskyPickAndPlace-v1
+  run: PPO
+  checkpoint-freq: 20
+  config:
+    num_workers: 25
+    ignore_worker_failures: True
+    num_cpus_per_worker: 1
+    num_gpus: 1
+    num_gpus_per_worker: 0
+#    lr: tune.grid_search([0.01, 0.001, 0.0001])
+    

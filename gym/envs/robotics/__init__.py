@@ -12,3 +12,6 @@ from gym.envs.robotics.hand.manipulate import HandPenEnv
 from gym.envs.robotics.hand.manipulate_touch_sensors import HandBlockTouchSensorsEnv
 from gym.envs.robotics.hand.manipulate_touch_sensors import HandEggTouchSensorsEnv
 from gym.envs.robotics.hand.manipulate_touch_sensors import HandPenTouchSensorsEnv
+
+from gym.envs.robotics.dual_ur5_husky_env import DualUR5HuskyEnv
+from gym.envs.robotics.dual_ur5_husky.pick_and_place import DualUR5HuskyPickAndPlaceEnv

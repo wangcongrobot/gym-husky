@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mujoco>
 	<compiler angle="radian" coordinate="local" meshdir="../stls/fetch" texturedir="../textures"></compiler>
-	<option timestep="0.002">
+	<option timestep="0.002" gravity="0 0 -9.81">
 		<flag warmstart="enable"></flag>
 	</option>
 
@@ -22,6 +22,7 @@
 		<body name="object0" pos="0.025 0.025 0.025">
 			<joint name="object0:joint" type="free" damping="0.01"></joint>
 			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="block_mat" mass="2"></geom>
+
 			<site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
 		</body>
 
@@ -30,6 +31,30 @@
 
 	<actuator>
 		<position ctrllimited="true" ctrlrange="0 0.2" joint="robot0:l_gripper_finger_joint" kp="30000" name="robot0:l_gripper_finger_joint" user="1"></position>
-		<position ctrllimited="true" ctrlrange="0 0.2" joint="robot0:r_gripper_finger_joint" kp="30000" name="robot0:r_gripper_finger_joint" user="1"></position>
+		<position ctrllimited="true" ctrlrange="0 0.201" joint="robot0:r_gripper_finger_joint" kp="30000" name="robot0:r_gripper_finger_joint" user="1"></position>
+		<!-- <motor joint="robot0:torso_lift_joint" ctrlrange="0.0386 0.3861" ctrllimited="true" /> -->
+		<!-- <position ctrllimited="true" ctrlrange="0.0386 0.3861" joint="robot0:torso_lift_joint" kp="300000" name="robot0:torso_lift_joint" user="1"></position> -->
+		<!-- name="robot0:head_tilt_joint" range="-0.76 1.45" -->
+		<!-- <position ctrllimited="true" ctrlrange="-0.76 1.45" joint="robot0:head_tilt_joint" kp="30000" name="robot0:head_tilt_joint" user="1" /> -->
+		<!-- <position ctrllimited="true" ctrlrange="-0.76 1.45" joint="robot0:slide0" kp="30000" name="robot0:slide0" user="1" /> -->
+		<!-- <position ctrllimited="true" ctrlrange="-0.76 1.45" joint="robot0:slide1" kp="30000" name="robot0:slide1"  /> -->
+
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="base_x_slide_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="wrist_y_slide_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="wrist_z_slide_joint" /> -->
+
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="object_x_slide_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="object_y_slide_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="object_z_slide_joint" /> -->
+
+		<position ctrllimited="true" ctrlrange="0 0.2" joint="base_x_slide_joint" kp="30000" name="base_x_slide_joint" user="1"></position>
+		<!-- <position ctrllimited="true" ctrlrange="0 0.2" joint="base_y_slide_joint" kp="30000" name="base_y_slide_joint" user="1" /> -->
+		<!-- <position ctrllimited="true" ctrlrange="0 0.2" joint="base_z_slide_joint" kp="30000" name="base_z_slide_joint" user="1" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="base_z_hinge_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="base_y_hinge_joint" /> -->
+        <!-- <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="2.0" joint="base_x_hinge_joint" /> -->
+        <position ctrllimited="true" ctrlrange="-0.57 0.57" kp="30000" joint="base_z_hinge_joint" name="base_z_hinge_joint" user="1" />
+        <!-- <position ctrllimited="true" ctrlrange="-1.0 1.0" kp="30000" joint="base_y_hinge_joint" name="base_y_hinge_joint" user="1" /> -->
+        <!-- <position ctrllimited="true" ctrlrange="-1.0 1.0" kp="30000" joint="base_x_hinge_joint" name="base_x_hinge_joint" user="1" /> -->
 	</actuator>
 </mujoco>
