@@ -1,0 +1,100 @@
+<mujoco model="sia_7f_arm">
+
+	<body mocap="true" name="gripper_r:mocap" pos="0 0 0" >
+		<geom conaffinity="0" contype="0" pos="0 0 -0.15" rgba="0.0 0.5 0.0 0.5" size="0.005 0.005 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0 -0.15" rgba="1.0 0.0 0.0 0.5" size="0.5 0.005 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0 -0.15" rgba="0.0 1.0 0.0 0.5" size="0.005 0.5 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0 -0.15" rgba="0.0 0.0 1.0 0.5" size="0.005 0.005 0.5" type="box" group="1"></geom>
+	</body>
+
+    <body name="sia_7f_base_link" quat="0.707 0 0 -0.707">
+
+    	<joint armature="0.0001" axis="1 0 0" damping="1e+11" name="robot0:slide0" pos="0 0 0" type="slide"></joint>
+		<joint armature="0.0001" axis="0 1 0" damping="1e+11" name="robot0:slide1" pos="0 0 0" type="slide"></joint>
+		<joint armature="0.0001" axis="0 0 1" damping="1e+11" name="robot0:slide2" pos="0 0 0" type="slide"></joint>
+		<inertial diaginertia="1.2869 1.2236 0.9868" mass="70.1294" pos="-0.0036 0 0.0014" quat="0.7605 -0.0133 -0.0061 0.6491"></inertial>
+
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.658824 0.654902 0.403922 1" mesh="sia_7f_base_link" />
+        <geom type="mesh" rgba="0.658824 0.654902 0.403922 1" mesh="sia_7f_base_link_collision" />
+        <body name="sia_7f_link1" pos="-0.01372 0.16593 0.063">
+            <inertial pos="-0.00477249 0.0548648 0.0175766" quat="0.434914 0.713885 -0.514847 0.190133" mass="2.47722" diaginertia="0.009148 0.0085994 0.00483567" />
+            <joint name="sia_7f_joint1" pos="0 0 0" axis="0 0 1" limited="true" range="-1 1" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link1" />
+            <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link1_collision" />
+            <body name="sia_7f_link2" pos="0 0.0925 0.0785" quat="0.707105 0 0.707108 0">
+                <inertial pos="-0.476597 -0.0343272 0.00067143" quat="0.00151137 0.707106 0.000865133 0.707105" mass="20.0356" diaginertia="1.30077 1.27051 0.102519" />
+                <joint name="sia_7f_joint2" pos="0 0 0" axis="0 0 1" limited="true" range="-2 0" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link2" />
+                <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link2_collision" />
+                <body name="sia_7f_link3" pos="-0.95 0 0" quat="-3.67321e-06 -1 0 0">
+                    <inertial pos="0.0439931 -0.114053 -0.000160934" quat="0.0582061 0.70445 -0.0448606 0.705938" mass="14.7885" diaginertia="0.102835 0.0892112 0.0615947" />
+                    <joint name="sia_7f_joint3" pos="0 0 0" axis="0 0 -1" limited="true" range="0 2" />
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link3" />
+                    <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link3_collision" />
+                    <body name="sia_7f_link4" pos="0.139 -0.127 0" quat="-2.59734e-06 0.707105 -2.59735e-06 -0.707108">
+                        <inertial pos="-5.33239e-05 0.00165079 -0.194398" quat="0.707233 -0.00722231 0.00779547 0.7069" mass="4.55298" diaginertia="0.0755215 0.0741948 0.0141235" />
+                        <joint name="sia_7f_joint4" pos="0 0 0" axis="0 0 1" limited="true" range="-1.5 1.5" />
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link4" />
+                        <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link4_collision" />
+                        <body name="sia_7f_link5" pos="-0.0005 0 -0.396" quat="0.707105 0 0.707108 0">
+                            <inertial pos="-0.000417408 0.14142 0.0005" quat="0.706955 0.706955 -0.0146263 -0.0146263" mass="14.6515" diaginertia="0.0511223 0.0509324 0.0366645" />
+                            <joint name="sia_7f_joint5" pos="0 0 0" axis="0 0 1" limited="true" range="-2 0" />
+                            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link5" />
+                            <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="sia_7f_link5_collision" />
+
+                            <!-- <body name="sia_7f_gripper" pos="0 0.2471 0.0005" quat="0.499998 0.5 -0.5 0.500002"> -->
+                            <body name="r_gripper_palm_link" pos="0 0.2471 0.0005" quat="0.499998 0.5 -0.5 0.500002">
+                                <site name="r_grip_site" pos="0 0 -0.15" size="0.01" rgba="1 0 0 1" type="sphere" group="1"/>
+                                <inertial pos="3.26846e-08 0 -0.0226729" quat="0 0.707107 0 0.707107" mass="0.217997" diaginertia="0.00032971 0.000281938 0.000209321" />
+                                <joint name="sia_7f_gripper" pos="0 0 0" axis="0 0 -1" limited="true" range="-2 2" />
+                                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="sia_7f_gripper" />
+                                <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="sia_7f_gripper_collision" />
+
+                                <body name="7f_gripper_left_inner_knuckle" pos="0.0115 0 -0.058" quat="0.707105 0.707108 0 0">
+                                    <inertial pos="0.00025 -0.0449993 0" quat="0.707104 0.707104 0.00196419 0.00196419" mass="0.0575818" diaginertia="0.000136036 8.47532e-05 5.36227e-05" />
+                                    <joint name="7f_gripper_left_inner_knuckle_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-1 1" />
+                                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_inner_knuckle" />
+                                    <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_inner_knuckle_collision" />
+                                </body>
+
+                                <body name="7f_gripper_left_outer_finger" pos="0.0525 0 -0.028" quat="0.707105 0.707108 0 0">
+                                    <inertial pos="0.00025 -0.0449993 0" quat="0.707104 0.707104 0.00196419 0.00196419" mass="0.100689" diaginertia="0.000179129 0.000126093 5.76745e-05" />
+                                    <joint name="sia_7f_finger_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-1 0" />
+                                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_outer_finger" />
+                                    <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_outer_finger_collision" />
+                                    <body name="7f_gripper_left_inner_finger" pos="0.0005 -0.089999 0" quat="-3.67321e-06 1 0 0">
+                                        <inertial pos="-0.0308058 0.0521402 9.784e-09" quat="0.69201 0.69201 0.145333 0.145333" mass="0.124285" diaginertia="0.000192554 0.000168251 5.5144e-05" />
+                                        <joint name="7f_gripper_left_inner_finger_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1 1" />
+                                        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_inner_finger" />
+                                        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_left_inner_finger_collision" />
+                                    </body>
+                                </body>
+
+                                <body name="7f_gripper_right_inner_knuckle" pos="-0.0115 0 -0.058" quat="0.707105 0.707108 0 0">
+                                    <inertial pos="-0.00025 -0.0449993 0" quat="0.707104 0.707104 -0.00196419 -0.00196419" mass="0.0575818" diaginertia="0.000136036 8.47532e-05 5.36227e-05" />
+                                    <joint name="7f_gripper_right_inner_knuckle_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-1 1" />
+                                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_inner_knuckle" />
+                                    <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_inner_knuckle_collision" />
+                                </body>
+
+                                <body name="7f_gripper_right_outer_finger" pos="-0.0525 0 -0.028" quat="0.707105 0.707108 0 0">
+                                    <inertial pos="-0.00025 -0.0449993 0" quat="0.707104 0.707104 -0.00196419 -0.00196419" mass="0.100689" diaginertia="0.000179129 0.000126093 5.76745e-05" />
+                                    <joint name="7f_gripper_right_outer_finger_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-1 1" />
+                                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_outer_finger" />
+                                    <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_outer_finger_collision" />
+                                    <body name="7f_gripper_right_inner_finger" pos="-0.0005 -0.089999 0">
+                                        <inertial pos="0.0308058 -0.0521402 9.784e-09" quat="0.69201 0.69201 0.145333 0.145333" mass="0.124285" diaginertia="0.000192554 0.000168251 5.5144e-05" />
+                                        <joint name="7f_gripper_right_inner_finger_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-1 1" />
+                                        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_inner_finger" />
+                                        <geom type="mesh" rgba="0.792157 0.819608 0.933333 1" mesh="7f_gripper_right_inner_finger_collision" />
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </body>
+</mujoco>
+

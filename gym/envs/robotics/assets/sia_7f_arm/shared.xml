@@ -1,0 +1,145 @@
+<mujoco model="sia_7f_arm">
+    <compiler angle="radian" meshdir="../stls/sia_7f_arm" />
+    <option timestep="2e-3"
+        iterations="10"
+        tolerance="1e-10"
+        impratio="300"
+        gravity="0 0 -9.81"
+        cone="elliptic" />
+        <!-- solver="PGS"
+        cone="elliptic" /> -->
+    <size njmax="500" nconmax="100" />
+    <asset>
+        <mesh name="sia_7f_base_link" file="sia_7f_base_link.STL" />
+        <mesh name="sia_7f_base_link_collision" file="sia_7f_base_link_collision.stl" />
+        <mesh name="sia_7f_link1" file="sia_7f_link1.STL" />
+        <mesh name="sia_7f_link1_collision" file="sia_7f_link1_collision.stl" />
+        <mesh name="sia_7f_link2" file="sia_7f_link2.STL" />
+        <mesh name="sia_7f_link2_collision" file="sia_7f_link2_collision.stl" />
+        <mesh name="sia_7f_link3" file="sia_7f_link3.STL" />
+        <mesh name="sia_7f_link3_collision" file="sia_7f_link3_collision.stl" />
+        <mesh name="sia_7f_link4" file="sia_7f_link4.STL" />
+        <mesh name="sia_7f_link4_collision" file="sia_7f_link4_collision.stl" />
+        <mesh name="sia_7f_link5" file="sia_7f_link5.STL" />
+        <mesh name="sia_7f_link5_collision" file="sia_7f_link5_collision.stl" />
+        <mesh name="sia_7f_gripper" file="sia_7f_gripper.STL" />
+        <mesh name="sia_7f_gripper_collision" file="sia_7f_gripper_collision.stl" />
+        <mesh name="7f_gripper_left_inner_knuckle" file="7f_gripper_left_inner_knuckle.STL" />
+        <mesh name="7f_gripper_left_inner_knuckle_collision" file="7f_gripper_left_inner_knuckle_collision.stl" />
+        <mesh name="7f_gripper_left_outer_finger" file="7f_gripper_left_outer_finger.STL" />
+        <mesh name="7f_gripper_left_outer_finger_collision" file="7f_gripper_left_outer_finger_collision.stl" />
+        <mesh name="7f_gripper_left_inner_finger" file="7f_gripper_left_inner_finger.STL" />
+        <mesh name="7f_gripper_left_inner_finger_collision" file="7f_gripper_left_inner_finger_collision.stl" />
+        <mesh name="7f_gripper_right_inner_knuckle" file="7f_gripper_right_inner_knuckle.STL" />
+        <mesh name="7f_gripper_right_inner_knuckle_collision" file="7f_gripper_right_inner_knuckle_collision.stl" />
+        <mesh name="7f_gripper_right_outer_finger" file="7f_gripper_right_outer_finger.STL" />
+        <mesh name="7f_gripper_right_outer_finger_collision" file="7f_gripper_right_outer_finger_collision.stl" />
+        <mesh name="7f_gripper_right_inner_finger" file="7f_gripper_right_inner_finger.STL" />
+        <mesh name="7f_gripper_right_inner_finger_collision" file="7f_gripper_right_inner_finger_collision.stl" />
+    </asset>
+
+<default>
+        <!-- all geom params -->
+        <geom contype='1' conaffinity='1' margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" condim="4" /> 
+        <!-- friction="1. 0.1 0.1" /> -->
+        <joint armature="0.01" damping="0.1" />
+        <!-- <default class="slide_joint">
+            <joint armature="0.01" damping="10000" type="slide"/>
+        </default> -->
+        <default class="UR5">
+            <joint damping='65'/>
+        </default>
+        <default class="UR5e">
+            <joint damping='45'/>
+        </default>
+        <default class="GRIPPER">
+            <joint damping='5'/>
+            <geom rgba="0.424 0.424 0.424 1.0" contype='1' conaffinity='1' margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" condim="4" type='mesh'/>
+            
+        </default>
+
+        <default class="dual_ur5_husky">
+            <!-- <geom margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" condim="4" user="0"></geom> -->
+            <!-- <joint armature="1" damping="50" frictionloss="0" stiffness="0"></joint> -->
+            
+            <default class="robot0:Gripper">
+                <!-- <geom condim="4" margin="0.001" type="box" user="0" rgba="0.356 0.361 0.376 1.0"></geom> -->
+                <!-- <joint armature="100" damping="1000" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1" type="slide"></joint> -->
+            </default>
+
+            <!-- Default Joint -->
+            <!-- <default class="gripper:joint">
+                <joint armature="100" damping="1000" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1" type="slide"></joint>
+            </default> -->
+            <default class="ur5:joint">
+                <!-- <joint armature="1" damping="5" frictionloss="0" stiffness="0"></joint> -->
+            </default>
+
+            <!-- Default Colours -->
+
+            <default class="ur5:blue">
+                <geom rgba="0.635 0.784 0.910 1.0"></geom>
+                <!-- <joint armature="1" damping="5" frictionloss="0" stiffness="0"></joint> -->
+            </default>
+            <default class="ur5:grey">
+                <geom rgba="0.365 0.365 0.365 1.0"></geom>
+            </default>
+            <default class="ur5:black">
+                <geom rgba="0.106 0.106 0.106 1.0"></geom>
+            </default>
+            <default class="husky:orange">
+                <geom rgba="0.996 0.941 0.412 1.0"></geom>
+            </default>
+            <default class="husky:black">
+                <geom rgba="0.192 0.192 0.192 1.0"></geom>
+            </default>
+            <default class="gripper:black">
+                <geom rgba="0.424 0.424 0.424 1.0"></geom>
+                <!-- <joint damping="50"></joint> -->
+                <!-- <geom condim="4" margin="0.001" type="box" user="0" rgba="0.356 0.361 0.376 1.0"></geom> -->
+                <!-- <geom contype='1' conaffinity='1' margin='0.001' solimp='0.99 0.99 0.01' solref='0.01 1' condim='4' /> -->
+                <!-- <joint armature="1" damping="1" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1"></joint> -->
+            </default>
+            <default class="gripper:white">
+                <!-- <geom rgba="0.898 0.898 0.898 1.0"></geom> -->
+                <geom rgba="0.898 0.898 0.898 1.0" contype='1' conaffinity='1' margin='0.001' solimp='0.99 0.99 0.01' solref='0.01 1' condim='4' type='mesh'/>
+                <!-- <joint damping="50"></joint> -->
+                <!-- <geom condim="4" margin="0.001" type="box" user="0" rgba="0.356 0.361 0.376 1.0"></geom> -->
+                <!-- <joint armature="1" damping="1" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1"></joint> -->
+            </default>
+            <default class="bb2_camera">
+                <geom rgba="0.776 0.624 0.294 1.0"></geom>
+            </default>
+            <default class="wheel">
+                <geom rgba="0.231 0.231 0.231 1.0"></geom>
+            </default>
+            <default class="sick_lidar">
+                <geom rgba="0.761 0.714 0.576 1.0"></geom>
+            </default>
+        </default>
+    </default>
+
+    <equality>
+        <!-- <weld body1="gripper_l:mocap" body2="l_gripper_palm_link" solimp="0.9 0.95 0.001" solref="0.02 1"></weld> -->
+        <weld body2="gripper_r:mocap" body1="r_gripper_palm_link" solimp="0.9 0.95 0.001" solref="0.02 1"></weld>
+    </equality>
+
+    <equality>
+        <connect body1="7f_gripper_left_inner_knuckle" body2="7f_gripper_left_inner_finger" anchor="0. -0.09 0."/>
+        <connect body1="7f_gripper_right_inner_knuckle" body2="7f_gripper_right_inner_finger" anchor="0. -0.09 0."/>
+    </equality>
+
+    <contact>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_left_inner_knuckle"/>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_left_outer_finger"/>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_right_inner_knuckle"/>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_right_outer_finger"/>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_left_inner_finger"/>
+        <exclude body1="r_gripper_palm_link" body2="7f_gripper_right_inner_finger"/>
+        <exclude body1="7f_gripper_left_outer_finger" body2="7f_gripper_left_inner_finger"/>
+        <exclude body1="7f_gripper_right_outer_finger" body2="7f_gripper_right_inner_finger"/>
+        <exclude body1="7f_gripper_left_inner_knuckle" body2="7f_gripper_left_inner_finger"/>
+        <exclude body1="7f_gripper_right_inner_knuckle" body2="7f_gripper_right_inner_finger"/>
+    </contact>
+
+</mujoco>

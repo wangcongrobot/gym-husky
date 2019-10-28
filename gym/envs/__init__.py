@@ -382,6 +382,22 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=100,
     )
 
+    # Mobile Dual_UR5_Husky
+    register(
+        id='MobileDualUR5HuskyPickAndPlace{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:MobileDualUR5HuskyPickAndPlaceEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
+    # SIA 7f arm
+    register(
+        id='SIA7FArmPickAndPlace{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:SIA7FArmPickAndPlaceEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
     # Hand
     register(
         id='HandReach{}-v0'.format(suffix),

@@ -8,8 +8,8 @@ def goal_distance(goal_a, goal_b):
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
 
-class DualUR5HuskyEnv(robot_env.RobotEnv):
-    """Superclass for all Dual_UR5_Husky environments.
+class SIA7FArmEnv(robot_env.RobotEnv):
+    """Superclass for all SIA 7F Arm environments.
     """
 
     def __init__(
@@ -49,10 +49,10 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         self.gripper_dof = 1
         # self.n_actions = self.arm_dof + self.gripper_dof
         
-        self.gripper_actual_dof = 4
+        self.gripper_actual_dof = 6
         self.gripper_close = False
 
-        super(DualUR5HuskyEnv, self).__init__(
+        super(SIA7FArmEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=self.n_actions,
             initial_qpos=initial_qpos)
 
@@ -303,10 +303,10 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
                 # reward_grasping += 1.0
                 self.gripper_close = True
                 # stage 1: approaching and grasping/lifting
-                if object_pos[2] > 0.37: # table hight + object hight + lift distance
+                if object_pos[2] > 0.75: # table hight + object hight + lift distance
                     # grasping success
                     reward_grasping += 10.0
-                    if object_pos[2] > 0.5:
+                    if object_pos[2] > 0.8:
                         reward_grasping += 100.0
                         # if object_pos[2] > 0.5:
                             # reward_grasping += 10.0
@@ -406,7 +406,7 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
 
         pos_ctrl *= 0.03  # limit maximum change in position
         # rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
-        rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
+        rot_ctrl = [0.5, 0.5, -0.5, -0.5] #(0 0 0)
         # rot_ctrl = [0.707, 0.0, 0.0, -0.707] # (0 0 -90)
         # rot_ctrl = np.array([0.5, -0.5, 0.5, -0.5]) #(-90, 90, 0)
         # rot_ctrl = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
@@ -490,14 +490,14 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
 
-            object_xpos = np.array([0.7, -0.5]) + self.np_random.uniform(-0.02, 0.07, size=2)
+            object_xpos = np.array([1.0, -0.0]) + self.np_random.uniform(-0.02, 0.07, size=2)
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')
             # object_qpos1 = self.sim.data.get_joint_qpos('object1:joint')
             assert object_qpos.shape == (7,)
             print("object_xpos0: ", object_xpos)
             # print("object1 pos: ", object_qpos1)
             object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.5
+            object_qpos[2] = 0.9
             # object_qpos[0] += 0.3
             # object_qpos[1] -= 0.1
             print("set_joint_qpos object_qpos: ", object_qpos)
@@ -508,8 +508,8 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         # for i in range(3):
         #     gripper_target[i] += self.np_random.uniform(-0.2, 0.2)
         # print("gripper target random: ", gripper_target)
-        gripper_target = np.array([0.5, -0.3, 0.6])
-        gripper_rotation = np.array([0, 0.707, 0.707, 0]) #(0, 0, -90)
+        gripper_target = np.array([0.80326763, 0.01372008, 0.7910795])
+        gripper_rotation = np.array([0.5, 0.5, -0.5, -0.5]) #(0, 0, -90)
         # for i in range(3):
         gripper_target[0] += self.np_random.uniform(-0.0, 0.1) # x
         gripper_target[1] += self.np_random.uniform(-0.1, 0.1) # y
@@ -563,11 +563,12 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         # gripper_rotation = np.array([-0.82031777, -0.33347336, -0.32553968,  0.33150896])
 
         # gripper_target = np.array([0.9, -0.3, 0.6])
-        gripper_target = np.array([0.5, -0.3, 0.6])
+        gripper_target = np.array([0.80326763, 0.01372008, 0.7910795]) 
+        #[0.79113495 0.01372013 0.79309962] [[ 6.91438326e-06  3.11198048e-02 -9.99515662e-01]
         # gripper_rotation = np.array([0.5, -0.5, -0.5, -0.5]) #(-90, 0, -90)
         # gripper_rotation = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
         # gripper_rotation = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
-        gripper_rotation = np.array([0, 0.707, 0.707, 0]) #(0, 0, -90)
+        gripper_rotation = np.array([0.5, 0.5, -0.5, -0.5]) #(0, 0, -90)
         # gripper_rotation = np.array([1.0, 0, 0, 0])
         # set random gripper position
         # for i in range(3):
@@ -595,7 +596,7 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
             self.height_offset = self.sim.data.get_site_xpos('object0')[2]
 
     def render(self, mode='human', width=500, height=500):
-        return super(DualUR5HuskyEnv, self).render(mode, width, height)
+        return super(SIA7FArmEnv, self).render(mode, width, height)
 
     ### Add function for dual_ur5_husky
 
@@ -605,7 +606,7 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         Args:
             action: 1 => open, -1 => closed
         """
-        movement = np.array([1, 1, 1, 0])
+        movement = np.array([-1, -1, -1, 1, 1, 1])
         return -1 * movement * action
 
     def gripper_format_action11(self, action):
@@ -616,5 +617,7 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         """
         movement = np.array([0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
         return -1 * movement * action
+
+
 
     

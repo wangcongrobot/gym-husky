@@ -1,7 +1,7 @@
-husky-ppo:
+husky-ppo-gae:
   env: DualUR5HuskyPickAndPlace-v1
   run: PPO
-  #checkpoint-freq: 20
+  checkpoint-freq: 20
   config:
     num_workers: 10
     lambda: 0.95
@@ -11,8 +11,4 @@ husky-ppo:
       free_log_std: true
     batch_mode: complete_episodes
     observation_filter: MeanStdFilter
-    sgd_minibatch_size: 32768
-    horizon: 50
-    train_batch_size: 320000
-    lr: 0.0001
-    num_sgd_iter: 20
+    checkpoint-freq: 1

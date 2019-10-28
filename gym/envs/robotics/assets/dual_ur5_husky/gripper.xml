@@ -75,16 +75,16 @@
 
         <!--Gripper-->
         <!-- position control mode -->
-        <position name='r_finger_1' ctrllimited="true" kp="20" joint='r_finger_1_joint_1' ctrlrange='0 1.2217'/>
+        <!-- <position name='r_finger_1' ctrllimited="true" kp="20" joint='r_finger_1_joint_1' ctrlrange='0 1.2217'/>
         <position name='r_finger_2' ctrllimited="true" kp="20" joint='r_finger_2_joint_1' ctrlrange='0 1.2217'/>
         <position name='r_middle_finger'  ctrllimited="true" kp="20" joint='r_finger_middle_joint_1' ctrlrange='0 1.2217'/>
-        <position name='r_finger_scissor' ctrllimited="true" kp="20" joint='r_palm_finger_1_joint' ctrlrange="-0.2967 0.2967"/> 
+        <position name='r_finger_scissor' ctrllimited="true" kp="20" joint='r_palm_finger_1_joint' ctrlrange="-0.2967 0.2967"/>  -->
 
         <!-- force control mode -->
-        <!-- <motor name='finger_1_T' ctrllimited="true" joint='gripperfinger_1_joint_1' ctrlrange='-0.1 .8' gear="20"/> -->
-        <!-- <motor name='finger_2_T' ctrllimited="true" joint='gripperfinger_2_joint_1' ctrlrange='-0.1 .8' gear="20"/> -->
-        <!-- <motor name='middle_finger_T'  ctrllimited="true" joint='gripperfinger_middle_joint_1' ctrlrange='-0.1 .8' gear="20"/> -->
-        <!-- <motor name='finger_scissor_T' ctrllimited="true" joint='gripperpalm_finger_1_joint' ctrlrange="-0.8 0.8" gear="15"/> -->
+        <motor name='finger_1_T' ctrllimited="true" joint='r_finger_1_joint_1' ctrlrange='-0.8 .8' gear="20"/>
+        <motor name='finger_2_T' ctrllimited="true" joint='r_finger_2_joint_1' ctrlrange='-0.8 .8' gear="20"/>
+        <motor name='middle_finger_T'  ctrllimited="true" joint='r_finger_middle_joint_1' ctrlrange='-0.8 .8' gear="20"/>
+        <motor name='finger_scissor_T' ctrllimited="true" joint='r_palm_finger_1_joint' ctrlrange="-0.8 0.8" gear="15"/>
     
         <!-- gripper joint -->
         <!-- <position ctrllimited="true" ctrlrange="-0.16 0.25" joint="gripperpalm_finger_1_joint" kp="20" name="gripper_palm_finger_1_joint" forcelimited="true" forcerange="-500 500"/>

@@ -398,13 +398,14 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
             self.sim.forward()
 
     def _set_action(self, action):
-        assert action.shape == (self.n_actions,)
+        assert action.shape == (self.n_actions,) # 6 mobile base
         action = action.copy()  # ensure that we don't change the action outside of this scope
         print("_set_action:", action)
-        # pos_ctrl, base_ctrl, gripper_ctrl = action[:3], action[3:-1], action[-1]
-        pos_ctrl, gripper_ctrl = action[:3], action[3:]
+        pos_ctrl, base_ctrl, gripper_ctrl = action[:3], action[3:-1], action[-1]
+        # pos_ctrl, gripper_ctrl = action[:3], action[3:]
 
         pos_ctrl *= 0.03  # limit maximum change in position
+        base_ctrl *= 0.01
         # rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
         rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
         # rot_ctrl = [0.707, 0.0, 0.0, -0.707] # (0 0 -90)
@@ -421,8 +422,8 @@ class DualUR5HuskyEnv(robot_env.RobotEnv):
         assert gripper_ctrl.shape == (self.gripper_actual_dof,)
         if self.block_gripper:
             gripper_ctrl = np.zeros_like(gripper_ctrl)
-        # action = np.concatenate([pos_ctrl, rot_ctrl, base_ctrl, gripper_ctrl])
-        action = np.concatenate([pos_ctrl, rot_ctrl, gripper_ctrl])
+        action = np.concatenate([pos_ctrl, rot_ctrl, base_ctrl, gripper_ctrl])
+        # action = np.concatenate([pos_ctrl, rot_ctrl, gripper_ctrl])
 
         # Apply action to simulation.
         utils.ctrl_set_action(self.sim, action) # base control + gripper control

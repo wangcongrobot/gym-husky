@@ -1,0 +1,20 @@
+<mujoco>
+  <actuator>
+        <!-- <position ctrllimited="true" ctrlrange="0 0.8575" joint="7f_gripper_left_inner_knuckle_joint" kp="10" name="7f_gripper_left_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="sia_7f_finger_joint" kp="10" name="sia_7f_finger_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="7f_gripper_left_inner_finger_joint" kp="10" name="7f_gripper_left_inner_finger_joint" forcelimited="true" forcerange="-20 20"/>
+
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="7f_gripper_right_inner_knuckle_joint" kp="10" name="7f_gripper_right_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="7f_gripper_right_outer_finger_joint" kp="10" name="7f_gripper_right_outer_finger_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="7f_gripper_right_inner_finger_joint" kp="10" name="7f_gripper_right_inner_finger_joint" forcelimited="true" forcerange="-20 20"/> -->
+
+        <position ctrllimited="true" ctrlrange="-1.57 1.57" joint="7f_gripper_left_inner_knuckle_joint" kp="10" name="left_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="-1.57 1.5707" joint="sia_7f_finger_joint" kp="10" name="sia_7f_finger_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="-1.57 1.5707" joint="7f_gripper_left_inner_finger_joint" kp="10" name="left_inner_finger_joint" forcelimited="true" forcerange="-20 20"/>
+
+        <position ctrllimited="true" ctrlrange="-1.57 1.5707" joint="7f_gripper_right_inner_knuckle_joint" kp="10" name="right_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="-1.57 1.5707" joint="7f_gripper_right_outer_finger_joint" kp="10" name="right_outer_finger_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="-1.57 1.5707" joint="7f_gripper_right_inner_finger_joint" kp="10" name="right_inner_finger_joint" forcelimited="true" forcerange="-20 20"/>
+        
+    </actuator>
+</mujoco>

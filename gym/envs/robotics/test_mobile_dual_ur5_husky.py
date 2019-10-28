@@ -8,32 +8,33 @@ import matplotlib.pyplot as plt
 mode = 'human'
 #mode = 'rgb_array'
 
-env = gym.make("DualUR5HuskyPickAndPlace-v1")
+env = gym.make("MobileDualUR5HuskyPickAndPlace-v1")
 # env = gym.make("FetchReach-v1")
 print("action space high: ", env.action_space.high)
 print("action space low: ", env.action_space.low)
 num_actuator = env.sim.model.nu
 print('num_actuator: ', num_actuator)
+print('joint names:', env.sim.model.joint_names)
 print("gripper pose: ", env.sim.data.get_site_xpos("r_grip_site"), env.sim.data.get_site_xmat("r_grip_site"))
 print("qpos: ", env.sim.data.qpos)
 env.render('human')
 #env = gym.wrappers.Monitor(env, './video', force=True)
 # plt.imshow(env.render(mode='rgb_array', camera_id=0))
-# plt.show()
+plt.show()
 
 
 # plt.show()
 # action = np.array([0.1, 0.0, 0.0, -0.1])
-for i in range(200):
+for i in range(20):
   env.reset()
   env.render('human')
   # action[-1] += 0.1
   # if action[-1] > 0.01:
         # action[-1] = -1.0
   # action = np.array([0, 0.0, 0.0, -1.0])
-  for i in range(200):
+  for i in range(20):
     action = env.action_space.sample()
-#     action = np.array([0.0, 0.0, 0.0, -1.0]) # 1.0 open -1.0 close
+#     action = np.array([0.0, 0.0, 0.0, -0.5, 0., -1.0]) # 1.0 open -1.0 close
     # action[-1] += 0.1
     # if action[-1] > 1.0:
           # action[-1] = -1.0

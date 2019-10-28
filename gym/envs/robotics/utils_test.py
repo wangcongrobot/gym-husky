@@ -31,7 +31,7 @@ def ctrl_set_action(sim, action):
         # action=np.array([0., 0., 0., 0.])
         # action = -0.5 * np.array([0.5, 0., 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
         # action = -1.0 * np.array([0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
-        # action = np.array([1.0, 1.0, 1.0, -1.0, -1.0, -1.0])
+        action = np.array([-1.0, -1.0, -1.0, 1.0, 1.0, 1.0])
         print("ctrl_set_action", action)
         print("ctrl_set_action.shape: ", action.shape)
 

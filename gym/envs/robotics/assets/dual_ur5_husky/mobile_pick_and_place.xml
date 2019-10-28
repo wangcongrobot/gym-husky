@@ -29,7 +29,7 @@
 		</body>
 
 		<!-- <include file="robot.xml"></include> -->
-		<include file="robot_husky.xml"></include>
+		<include file="robot_husky_mobile.xml"></include>
 		<!-- <include file="robotiq_gripper_s.xml"></include> -->
 
 		<!-- Object -->
@@ -92,8 +92,13 @@
 		<light directional="true" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false" pos="0 0 4" dir="0 0 -1" name="light0"></light>
 	</worldbody>
 
+
+    <actuator>
+        <!-- husky base control -->
+		<position ctrllimited="true" ctrlrange="-0.1 0.1" joint="base_x_slide_joint" kp="30000" name="base_x_slide_joint" user="1"></position>
+        <position ctrllimited="true" ctrlrange="-0.57 0.57" kp="30000" joint="base_z_hinge_joint" name="base_z_hinge_joint" user="1" />
+	</actuator>
 	<!-- <include file="actuator.xml"></include> -->
 	<include file="gripper.xml"></include>
 	<!-- <include file="robotiq_gripper_s_shared.xml"></include> -->
-
 </mujoco>
