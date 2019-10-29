@@ -43,13 +43,12 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         self.target_range = target_range
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
-        self.n_actions = n_actions
+        self.n_actions = n_actions # the total action number
 
-        self.arm_dof = 3
-        self.gripper_dof = 1
-        # self.n_actions = self.arm_dof + self.gripper_dof
+        self.arm_dof = 3 # (x,y,z)
+        self.gripper_dof = 1 # open/close
         
-        self.gripper_actual_dof = 6
+        self.gripper_actual_dof = 6 # 6 joint in gripper xml file
         self.gripper_close = False
 
         super(SIA7FArmEnv, self).__init__(
@@ -59,215 +58,14 @@ class SIA7FArmEnv(robot_env.RobotEnv):
     # GoalEnv methods
     # ----------------------------
 
-    def compute_reward_old(self, achieved_goal, goal, info):
-        # Compute distance between goal and the achieved goal.
-        d = goal_distance(achieved_goal, goal)
-        if self.reward_type == 'sparse':
-            return -(d > self.distance_threshold).astype(np.float32)
-        else:
-            return -d
-
-    def compute_reward1(self, action, goal):
-        # control_mult = 0.1
-        # r_control = (1 - np.tanh(np.square(action).sum())) * control_mult
-        r_control = -0.01 * np.square(action).sum()
-        print("r_control: ", r_control)
-
-        staged_reward = self.staged_reward(action, goal)
-        # print("staged_reward: ", staged_reward)
-        reward = r_control + staged_reward
-        done = False
-        object_pos = self.sim.data.get_site_xpos('object0')
-        # if object_pos[2] < 0.05:
-            # done = True
-        print("total reward: ", reward)
-        return reward, done
-
     def compute_reward(self, action, goal):
-        # return 0, 0
         return self.reward_pick(action, goal)
-        # return self.reward_place(action, goal)
-        # return self.staged_reward_simple(action, goal)
-        # return self.staged_reward_standford(action, goal)
-
-    def staged_reward_simple(self, action, goal):
-        """
-        Returns staged rewards based on current physical states.
-        Stages consist of reaching, grasping, lifting, and hovering.
-        """
-        object_pos = self.sim.data.get_site_xpos('object0')
-        grip_pos = self.sim.data.get_site_xpos('r_grip_site')
-        grip_obj_pos = object_pos - grip_pos
-        obj_target_pos = goal - object_pos
-        
-        reach_mult = 0.1
-        grasp_mult = 0.35
-        lift_mult = 0.5
-        hover_mult = 0.7
-        target_mult = 0.9
-        reward = 0.
-
-        ### reaching reward governed by distance to closest object ###
-        r_reach = 0
-        # get reaching reward via minimum distance to a target object
-        dist = np.linalg.norm(grip_obj_pos)
-        # r_reach = (1 - np.tanh(1.0 * dist)) * reach_mult
-        r_reach = - dist * reach_mult
-
-        ### grasping reward for touching any objects of interest ###
-        r_grasp = 0.
-        # touch_left_finger = False
-        # touch_right_finger = False
-        # touch_object = False
-        # if np.linalg.norm(grip_obj_pos) < 0.05:
-            # touch_object = True
-        
-        if object_pos[2] > (0.4 + 0.025 + 0.05):
-            r_grasp = grasp_mult
-
-        ### lifting reward for picking up an object ###
-        r_lift = 0.
-        # if r_grasp > 0.:
-            # object_pos[2] > (0.4 + 0.025 + 0.05)
-            # r_lift = lift_mult
-            # z_dist = 0.5 - object_pos[2]
-            # r_lift = grasp_mult + (1 - np.tanh(z_dist)) * (lift_mult - grasp_mult)
-
-        ### hover reward for getting object to target ###
-        r_hover = 0.
-        # if r_lift > 0.:
-        #     dist_hover = np.linalg.norm(obj_target_pos)
-        #     r_hover = grasp_mult + (1 - np.tanh(dist_hover)) * (hover_mult - grasp_mult)
-        
-        if r_grasp > 0.: 
-            dist_hover = np.linalg.norm(obj_target_pos)
-            r_hover = grasp_mult + (1 - np.tanh(dist_hover)) * (hover_mult - grasp_mult)
-
-        ### target ###
-        r_target = 0.
-        # if r_hover > 0.:
-        dist_target = np.linalg.norm(obj_target_pos)
-        if dist_target < 0.05:
-            r_target = target_mult
-
-        if r_grasp > 0.:
-            reward = r_hover + r_target
-        else:
-            reward = r_reach + r_grasp
-        # staged_reward = r_reach + r_grasp + r_hover + r_target
-        print("reward_reach: ", r_reach)
-        print("reward_grasp: ", r_grasp)
-        print("reward_hover: ", r_hover)
-        print("reward_target: ", r_target)
-
-        done = False
-        if object_pos[2] < 0.2:
-            done = True
-        return reward, done
-        # return r_reach, r_grasp, r_lift, r_hover, r_target
-
-    def staged_reward_standford(self, action, goal):
-        """
-        Returns staged rewards based on current physical states.
-        Stages consist of reaching, grasping, lifting, and hovering.
-        """
-        object_pos = self.sim.data.get_site_xpos('object0')
-        grip_pos = self.sim.data.get_site_xpos('r_grip_site')
-        grip_obj_pos = object_pos - grip_pos
-        obj_target_pos = goal - object_pos
-        
-        control_mult = 0.1
-        reach_mult = 0.1
-        grasp_mult = 0.5
-        lift_mult = 0.35
-        hover_mult = 0.7
-        target_mult = 0.9
-        reward = 0.
-
-        ### control action ###
-        action_sum = np.square(action).sum()
-        r_ctrl = (1 - np.tanh(0.5 * action_sum)) * control_mult
-
-        ### reaching reward governed by distance to closest object ###
-        r_reach = 0
-        # get reaching reward via minimum distance to a target object
-        dist = np.linalg.norm(grip_obj_pos)
-        r_reach = (1 - np.tanh(1.0 * dist)) * reach_mult
-        # r_reach = - dist * reach_mult
-
-        ### grasping reward for touching any objects of interest ###
-        # r_grasp = 0.
-        # touch_left_finger = False
-        # touch_right_finger = False
-        # touch_object = False
-        # if np.linalg.norm(grip_obj_pos) < 0.05:
-            # r_grasp = grasp_mult
-            # touch_object = True
-        # if object_pos[2] > (0.4 + 0.025 + 0.05):
-            # r_grasp = grasp_mult
-
-        ### lifting reward for picking up an object ###
-        r_lift = 0.
-        # if r_grasp > 0. and np.linalg.norm(grip_obj_pos) < 0.04:
-            # object_pos[2] > (0.4 + 0.025 + 0.05)
-            # r_lift = lift_mult
-        if np.linalg.norm(grip_obj_pos) < 0.05:
-            z_dist = 0.5 - object_pos[2]    
-            print("object_pos_z: ", object_pos[2])
-            print("z_dist: ", z_dist)
-            # r_lift = reach_mult + (1 - np.tanh(1.0 * np.linalg.norm(z_dist))) * (lift_mult - reach_mult)
-
-        # r_lift = 0.
-        # if object_pos[2] > (0.4 + 0.025 + 0.05):
-            # r_lift = lift_mult
-
-        r_grasp = 0.
-        if object_pos[2] > (0.4 + 0.025 + 0.05):
-            r_grasp = grasp_mult
-
-        ### hover reward for getting object to target ###
-        r_hover = 0.
-        if r_grasp > 0.:
-            dist_hover = np.linalg.norm(obj_target_pos)
-            print("dist_hover: ", dist_hover)
-            r_hover = grasp_mult + (1 - np.tanh(1.0 * dist_hover)) * (hover_mult - grasp_mult)
-
-        ### target ###
-        r_target = 0.
-        # if r_hover > 0.:
-        dist_target = np.linalg.norm(obj_target_pos)
-        if dist_target < 0.1:
-            r_target = target_mult
-            if dist_target < 0.05:
-                r_target += target_mult
-                if dist_target < 0.01:
-                    r_target += target_mult
-
-        print("reward_control: ", r_ctrl)
-        print("reward_reach: ", r_reach)
-        print("reward_lift: ", r_lift)
-        print("reward_grasp: ", r_grasp)
-        print("reward_hover: ", r_hover)
-        print("reward_target: ", r_target)
-        staged_reward = [r_reach, r_grasp, r_lift, r_hover, r_target]
-        # staged_reward = [r_reach, r_grasp, r_lift]
-        print("staged_reward: ", staged_reward)
-
-        reward = r_ctrl + max(staged_reward)
-        print("total reward: ", reward)
-
-        done = False
-        if object_pos[2] < 0.2:
-            done = True
-        
-        return reward, done
-        # return r_reach, r_grasp, r_lift, r_hover, r_target
 
     def reward_pick(self, action, goal):
         """
         Simple reward function: reach and pick
         """
-        # object_pos_1 = self.sim.data.get_site_xpos('object1')
+
         object_pos = self.sim.data.get_site_xpos('object0')
         print("self.sim.data.get_site_xpos('object0'): ", object_pos)
         grip_pos = self.sim.data.get_site_xpos('r_grip_site')
@@ -289,37 +87,18 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         print("distance between gripper and object: ", reward_dist_object)
         reward_dist_target = -np.linalg.norm(obj_target_pos)
 
+        self.gripper_close = False # this flag for gripper open/close trigger
+        if np.linalg.norm(grip_obj_pos) < 0.05:
+            # reward_grasping += 1.0 # it may cause a local minimum
+            self.gripper_close = True
+            if object_pos[2] > 0.75: # the default height of object on the table
+                # grasping success
+                reward_grasping += 10.0
+                if object_pos[2] > 0.8: # lifting 
+                    reward_grasping += 100.0
 
-        # reward_grasping = 0
-        # if np.linalg.norm(grip_obj_pos) < 0.1:
-        #     print("!!!!!!!!!!!!!!!!!!!!!!!!")
-        #     reward_grasping += 1.0
-        #     if np.linalg.norm(grip_obj_pos) < 0.05:
-        #         reward_grasping += 10.0
-        self.gripper_close = False
-        if np.linalg.norm(grip_obj_pos) < 0.1:
-            # reward_grasping += 0.5
-            if np.linalg.norm(grip_obj_pos) < 0.05:
-                # reward_grasping += 1.0
-                self.gripper_close = True
-                # stage 1: approaching and grasping/lifting
-                if object_pos[2] > 0.75: # table hight + object hight + lift distance
-                    # grasping success
-                    reward_grasping += 10.0
-                    if object_pos[2] > 0.8:
-                        reward_grasping += 100.0
-                        # if object_pos[2] > 0.5:
-                            # reward_grasping += 10.0
         reward = 0.01 * reward_ctrl + reward_dist_object + reward_grasping
-        # reward = 0.05 * reward_ctrl + reward_dist_object
 
-        # stage 2: approaching and target
-        # if reward_grasping > 0:
-            # if np.linalg.norm(obj_target_pos) < 0.05:
-                # reward_target = 20
-            # reward = 0.05 * reward_ctrl + reward_dist_target + reward_target
-            
-        # reward = 0.05 * reward_ctrl + reward_dist_object + reward_grasping + 10 * reward_dist_target + reward_target
         print("object_pose: ", object_pos)
         print("reward_dist_object: ", reward_dist_object)
         print("reward_ctrl: ", 0.05 * reward_ctrl)
@@ -328,65 +107,11 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         # print("reward_target: ", reward_target)
         print("total reward: ", reward)
         done = False
-        if object_pos[2] < 0.1:
+        if object_pos[2] < 0.1: # avoid the object dropped on the ground
             # done = True
             reward -= 10
         return reward, done
 
-    def reward_place(self, action, goal):
-        """
-        Simple reward function: reach and pick
-        """
-        object_pos = self.sim.data.get_site_xpos('object0')
-        grip_pos = self.sim.data.get_site_xpos('r_grip_site')
-        grip_obj_pos = object_pos - grip_pos
-        obj_target_pos = goal - object_pos
-
-        reward_ctrl = 0
-        reward_dist_object = 0
-        reward_grasping = 0
-        reward_dist_target = 0
-        reward_target = 0
-        reward = 0
-
-        reward_ctrl = -np.square(action).sum()
-
-        reward_dist_object = -np.linalg.norm(grip_obj_pos)
-        reward_dist_target = -np.linalg.norm(obj_target_pos)
-
-        # stage 1: approaching and grasping
-        if object_pos[2] > 0.45: # table hight + object hight + lift distance
-            # grasping success
-            reward_grasping = 1
-            if object_pos[2] > 0.47:
-                reward_grasping += 5
-                if object_pos[2] > 0.5:
-                    reward_dist_target + 10
-        reward = 0.05 * reward_ctrl + reward_dist_object + reward_grasping
-
-        # stage 2: approaching and target
-        if reward_grasping > 0:
-            if np.linalg.norm(obj_target_pos) < 0.1:
-                reward_target = 10
-                if np.linalg.norm(obj_target_pos) < 0.05:
-                    reward_target += 10
-                    if np.linalg.norm(obj_target_pos) < 0.01:
-                        reward_target += 10
-
-        reward = 0.05 * reward_ctrl + reward_dist_target + reward_target
-
-        # reward = 0.05 * reward_ctrl + reward_dist_object + reward_grasping + 10 * reward_dist_target + reward_target
-        print("object_pose: ", object_pos)
-        print("reward_dist_object: ", reward_dist_object)
-        print("reward_ctrl: ", 0.05 * reward_ctrl)
-        print("reward_grasping: ", reward_grasping)
-        print("reward_dist_target: ", reward_dist_target)
-        # print("reward_target: ", reward_target)
-        print("total reward: ", reward)
-        done = False
-        if object_pos[2] < 0.2:
-            done = True
-        return reward, done
 
     # RobotEnv methods
     # ----------------------------
@@ -401,31 +126,25 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         assert action.shape == (self.n_actions,)
         action = action.copy()  # ensure that we don't change the action outside of this scope
         print("_set_action:", action)
-        # pos_ctrl, base_ctrl, gripper_ctrl = action[:3], action[3:-1], action[-1]
         pos_ctrl, gripper_ctrl = action[:3], action[3:]
 
         pos_ctrl *= 0.03  # limit maximum change in position
-        # rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
-        rot_ctrl = [0.5, 0.5, -0.5, -0.5] #(0 0 0)
-        # rot_ctrl = [0.707, 0.0, 0.0, -0.707] # (0 0 -90)
-        # rot_ctrl = np.array([0.5, -0.5, 0.5, -0.5]) #(-90, 90, 0)
-        # rot_ctrl = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
-        # rot_ctrl = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
-        # gripper_ctrl = np.array([gripper_ctrl, gripper_ctrl])
+        rot_ctrl = [0.5, 0.5, -0.5, -0.5] # # fixed rotation of the end effector, expressed as a quaternion
+
+        # you can comment this part to use a random gripper control
         if self.gripper_close:
             gripper_ctrl = 1.0
         else:
             gripper_ctrl = -1.0
+
         gripper_ctrl = self.gripper_format_action(gripper_ctrl)
-        # assert gripper_ctrl.shape == (2,)
         assert gripper_ctrl.shape == (self.gripper_actual_dof,)
         if self.block_gripper:
             gripper_ctrl = np.zeros_like(gripper_ctrl)
-        # action = np.concatenate([pos_ctrl, rot_ctrl, base_ctrl, gripper_ctrl])
         action = np.concatenate([pos_ctrl, rot_ctrl, gripper_ctrl])
 
         # Apply action to simulation.
-        utils.ctrl_set_action(self.sim, action) # base control + gripper control
+        utils.ctrl_set_action(self.sim, action) # gripper control
         utils.mocap_set_action(self.sim, action) # arm control in cartesion (x, y, z)
 
     def _get_obs(self):
@@ -490,45 +209,29 @@ class SIA7FArmEnv(robot_env.RobotEnv):
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
 
+            # the inital position of (x,y) plus a random value
             object_xpos = np.array([1.0, -0.0]) + self.np_random.uniform(-0.02, 0.07, size=2)
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')
-            # object_qpos1 = self.sim.data.get_joint_qpos('object1:joint')
             assert object_qpos.shape == (7,)
             print("object_xpos0: ", object_xpos)
-            # print("object1 pos: ", object_qpos1)
             object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.9
-            # object_qpos[0] += 0.3
-            # object_qpos[1] -= 0.1
+            object_qpos[2] = 0.9 # the initial height of object
+
             print("set_joint_qpos object_qpos: ", object_qpos)
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
             # print("get_body_xquat: ", self.sim.data.get_body_xquat('r_gripper_palm_link'))
 
-        # set random gripper position
-        # for i in range(3):
-        #     gripper_target[i] += self.np_random.uniform(-0.2, 0.2)
-        # print("gripper target random: ", gripper_target)
+        # give a ramdom position for the gripper
         gripper_target = np.array([0.80326763, 0.01372008, 0.7910795])
-        gripper_rotation = np.array([0.5, 0.5, -0.5, -0.5]) #(0, 0, -90)
-        # for i in range(3):
+        gripper_rotation = np.array([0.5, 0.5, -0.5, -0.5]) # fixed gripper rotation
+        # random value for x,y,z
         gripper_target[0] += self.np_random.uniform(-0.0, 0.1) # x
         gripper_target[1] += self.np_random.uniform(-0.1, 0.1) # y
-        gripper_target[2] += self.np_random.uniform(-0.1, 0.1) # z
+        gripper_target[2] += self.np_random.uniform(-0., 0.1) # z
         self.sim.data.set_mocap_pos('gripper_r:mocap', gripper_target)
         self.sim.data.set_mocap_quat('gripper_r:mocap', gripper_rotation)
         for _ in range(10):
             self.sim.step()
-
-        # # set random end-effector position
-        # end_effector_pos = self.initial_gripper_xpos
-        # rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
-        # end_effector_pos = np.concatenate([end_effector_pos, rot_ctrl])
-        # print("end_effector_pos: ", end_effector_pos)
-        # for i in range(3):
-        #     end_effector_pos[i] = self.initial_gripper_xpos[i] + self.np_random.uniform(-0.1, 0.1)
-        # utils.mocap_set_action(self.sim, end_effector_pos) # arm control in cartesion (x, y, z)
-        # # for _ in range(100):
-        #     # self.sim.step()
 
         self.sim.forward()
         return True
@@ -554,41 +257,17 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         utils.reset_mocap_welds(self.sim)
         self.sim.forward()
 
-        # Move end effector into position.
-        # gripper_target = np.array([-0.498, 0.005, -0.431 + self.gripper_extra_height]) + self.sim.data.get_site_xpos('r_grip_site')
-        gripper_target = np.array([0.498, 0.005, 0.431 + self.gripper_extra_height]) + self.sim.data.get_site_xpos('r_grip_site')
+        # Move end effector to initial position.
         print("gripper quat: ", self.sim.data.get_site_xmat('r_grip_site'))
         print("get_mocap_quat: ", self.sim.data.get_mocap_quat('gripper_r:mocap'))
-        # gripper_rotation = np.array([1., 0., 1., 0.])
-        # gripper_rotation = np.array([-0.82031777, -0.33347336, -0.32553968,  0.33150896])
 
-        # gripper_target = np.array([0.9, -0.3, 0.6])
         gripper_target = np.array([0.80326763, 0.01372008, 0.7910795]) 
-        #[0.79113495 0.01372013 0.79309962] [[ 6.91438326e-06  3.11198048e-02 -9.99515662e-01]
-        # gripper_rotation = np.array([0.5, -0.5, -0.5, -0.5]) #(-90, 0, -90)
-        # gripper_rotation = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
-        # gripper_rotation = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
         gripper_rotation = np.array([0.5, 0.5, -0.5, -0.5]) #(0, 0, -90)
-        # gripper_rotation = np.array([1.0, 0, 0, 0])
-        # set random gripper position
-        # for i in range(3):
-        #     gripper_target[i] += self.np_random.uniform(-0.2, 0.2)
-        # print("gripper target random: ", gripper_target)
+
         self.sim.data.set_mocap_pos('gripper_r:mocap', gripper_target)
         self.sim.data.set_mocap_quat('gripper_r:mocap', gripper_rotation)
         for _ in range(10):
             self.sim.step()
-
-        # # set random end-effector position
-        # end_effector_pos = self.initial_gripper_xpos
-        # rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
-        # end_effector_pos = np.concatenate([end_effector_pos, rot_ctrl])
-        # print("end_effector_pos: ", end_effector_pos)
-        # for i in range(3):
-        #     end_effector_pos[i] = self.initial_gripper_xpos[i] + self.np_random.uniform(-0.1, 0.1)
-        # utils.mocap_set_action(self.sim, end_effector_pos) # arm control in cartesion (x, y, z)
-        # # for _ in range(100):
-        #     # self.sim.step()
 
         # Extract information for sampling goals.
         self.initial_gripper_xpos = self.sim.data.get_site_xpos('r_grip_site').copy()
@@ -598,7 +277,7 @@ class SIA7FArmEnv(robot_env.RobotEnv):
     def render(self, mode='human', width=500, height=500):
         return super(SIA7FArmEnv, self).render(mode, width, height)
 
-    ### Add function for dual_ur5_husky
+    ### Add some useful function
 
     def gripper_format_action(self, action):
         """ Given (-1,1) abstract control as np-array return the (-1,1) control signals
@@ -607,15 +286,6 @@ class SIA7FArmEnv(robot_env.RobotEnv):
             action: 1 => open, -1 => closed
         """
         movement = np.array([-1, -1, -1, 1, 1, 1])
-        return -1 * movement * action
-
-    def gripper_format_action11(self, action):
-        """ Given (-1,1) abstract control as np-array return the (-1,1) control signals
-        for underlying actuators as 1-d np array
-        Args:
-            action: 1 => open, -1 => closed
-        """
-        movement = np.array([0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
         return -1 * movement * action
 
 
