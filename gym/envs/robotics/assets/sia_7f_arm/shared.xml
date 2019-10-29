@@ -1,3 +1,5 @@
+<!-- Newton PGS -->
+
 <mujoco model="sia_7f_arm">
     <compiler angle="radian" meshdir="../stls/sia_7f_arm" />
     <option timestep="2e-3"
@@ -5,9 +7,8 @@
         tolerance="1e-10"
         impratio="300"
         gravity="0 0 -9.81"
-        cone="elliptic" />
-        <!-- solver="PGS"
-        cone="elliptic" /> -->
+        cone="elliptic" 
+        solver="PGS" />
     <size njmax="500" nconmax="100" />
     <asset>
         <mesh name="sia_7f_base_link" file="sia_7f_base_link.STL" />
@@ -42,7 +43,7 @@
         <!-- all geom params -->
         <geom contype='1' conaffinity='1' margin="0.001" solimp="0.99 0.99 0.01" solref="0.01 1" condim="4" /> 
         <!-- friction="1. 0.1 0.1" /> -->
-        <joint armature="0.01" damping="0.1" />
+        <joint armature="0.01" damping="1.0" />
         <!-- <default class="slide_joint">
             <joint armature="0.01" damping="10000" type="slide"/>
         </default> -->

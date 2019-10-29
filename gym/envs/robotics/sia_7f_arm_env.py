@@ -412,10 +412,10 @@ class SIA7FArmEnv(robot_env.RobotEnv):
         # rot_ctrl = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
         # rot_ctrl = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
         # gripper_ctrl = np.array([gripper_ctrl, gripper_ctrl])
-        # if self.gripper_close:
-        #     gripper_ctrl = -1.0
-        # else:
-        #     gripper_ctrl = 1.0
+        if self.gripper_close:
+            gripper_ctrl = 1.0
+        else:
+            gripper_ctrl = -1.0
         gripper_ctrl = self.gripper_format_action(gripper_ctrl)
         # assert gripper_ctrl.shape == (2,)
         assert gripper_ctrl.shape == (self.gripper_actual_dof,)
