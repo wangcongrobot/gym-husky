@@ -16,7 +16,15 @@ from gym.envs.robotics.hand.manipulate_touch_sensors import HandPenTouchSensorsE
 from gym.envs.robotics.dual_ur5_husky_env import DualUR5HuskyEnv
 from gym.envs.robotics.dual_ur5_husky.pick_and_place import DualUR5HuskyPickAndPlaceEnv
 
+# from gym.envs.robotics.robot_gym_env import RobotGymEnv
+# from gym.envs.robotics.robot_ros_env import RobotROSEnv
+
+# from gym.envs.robotics.mobile_dual_ur5_husky_gym_env import MobileDualUR5HuskyGymEnv
+# from gym.envs.robotics.mobile_dual_ur5_husky_ros_env import MobileDualUR5HuskyROSEnv
+
 from gym.envs.robotics.dual_ur5_husky.mobile_pick_and_place import MobileDualUR5HuskyPickAndPlaceEnv
+from gym.envs.robotics.dual_ur5_husky.mobile_pick_and_place_gym import MobileDualUR5HuskyPickAndPlaceGymEnv
+from gym.envs.robotics.dual_ur5_husky.mobile_pick_and_place_ros import MobileDualUR5HuskyPickAndPlaceROSEnv
 
 from gym.envs.robotics.sia_7f_arm.pick_and_place import SIA7FArmPickAndPlaceEnv
 from gym.envs.robotics.sia_7f_arm_env import SIA7FArmEnv

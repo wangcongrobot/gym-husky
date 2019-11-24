@@ -382,10 +382,26 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=100,
     )
 
-    # Mobile Dual_UR5_Husky
+    # Mobile Dual_UR5_Husky GymGoalEnv
     register(
         id='MobileDualUR5HuskyPickAndPlace{}-v1'.format(suffix),
         entry_point='gym.envs.robotics:MobileDualUR5HuskyPickAndPlaceEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
+    # Mobile Dual_UR5_Husky GymEnv
+    register(
+        id='MobileDualUR5HuskyPickAndPlaceGym{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:MobileDualUR5HuskyPickAndPlaceGymEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
+    # Mobile Dual_UR5_Husky ROSEnv
+    register(
+        id='MobileDualUR5HuskyPickAndPlaceROS{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:MobileDualUR5HuskyPickAndPlaceROSEnv',
         kwargs=kwargs,
         max_episode_steps=100,
     )

@@ -11,6 +11,13 @@ try:
 except ImportError as e:
     raise error.DependencyNotInstalled("{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(e))
 
+# ROS
+import rospy
+from std_msgs.msg import Float64
+from sensor_msgs.msg import JointState
+from nav_msgs.msg import Odometry
+from husky_train.srv import EePose, EePoseRequest, EeRpy, EeRpyRequest, EeTraj, EeTrajRequest, JointTraj, JointTrajRequest
+
 from collections import OrderedDict
 
 def convert_observation_to_space(observation):
@@ -30,7 +37,7 @@ def convert_observation_to_space(observation):
 
 DEFAULT_SIZE = 500
 
-class RobotGymEnv(gym.Env):
+class RobotROSEnv(gym.Env):
     def __init__(self, model_path, initial_qpos, n_actions, n_substeps):
         if model_path.startswith('/'):
             fullpath = model_path
@@ -48,6 +55,31 @@ class RobotGymEnv(gym.Env):
             'render.modes': ['human', 'rgb_array'],
             'video.frames_per_second': int(np.round(1.0 / self.dt))
         }
+
+        # ROS
+        self.JOINT_STATES_SUBSCRIBER = '/joint_states'
+        self.joint_names = ["r_ur5_arm_shoulder_pan_joint", 
+                          "r_ur5_arm_shoulder_lift_joint", 
+                          "r_ur5_arm_elbow_joint", 
+                          "r_ur5_arm_wrist_1_joint", 
+                          "r_ur5_arm_wrist_2_joint", 
+                          "r_ur5_arm_wrist_3_joint"]
+
+        self._check_all_systems_ready()
+        
+        self.joint_states_sub = rospy.Subscriber(self.JOINT_STATES_SUBSCRIBER, JointState, self.joints_callback)
+        self.joints = JointState()
+
+        self.ee_traj_client = rospy.ServiceProxy('/ee_traj_srv', EeTraj)
+        self.joint_traj_client = rospy.ServiceProxy('/joint_traj_srv', JointTraj)
+        self.ee_pose_client = rospy.ServiceProxy('/ee_pose_srv', EePose)
+        self.ee_rpy_client = rospy.ServiceProxy('/ee_rpy_srv', EeRpy)
+
+        self.controllers_list = []
+        self.robot_name_space = ""
+
+
+
 
         self.seed()
         self._env_setup(initial_qpos=initial_qpos)
@@ -68,6 +100,78 @@ class RobotGymEnv(gym.Env):
     @property
     def dt(self):
         return self.sim.model.opt.timestep * self.sim.nsubsteps
+
+    # ROS methods
+
+    def _check_all_systems_ready(self):
+        """
+        Checks that all the sensors, publishers, and other simulation systems are operational.
+        """
+        self._check_all_sensors_ready()
+        return True
+
+    def _check_all_sensors_ready(self):
+        self._check_joint_states_ready()
+
+        rospy.logdebug("ALL SENSORS READY")
+
+    def _check_joint_states_ready(self):
+        self.joints = None
+        while self.joints is None and not rospy.is_shutdown():
+            try:
+                self.joints = rospy.wait_for_message(self.JOINT_STATES_SUBSCRIBER, JointState, timeout=1.0)
+                rospy.logdebug("Current " + str(self.JOINT_STATES_SUBSCRIBER) + "READY=>" + str(self.joints))
+
+            except:
+                rospy.logerr("Current " + str(self.JOINT_STATES_SUBSCRIBER) + " not ready yet, retrying...")
+        return self.joints
+
+    def joints_callback(self, data):
+        self.joints = data
+
+    def get_joints(self):
+        return self.joints
+    
+    def get_joint_names(self):
+        return self.joints.name
+
+    def set_trajectory_ee(self, action):
+        ee_target = EdTrajRequest()
+        ee_target.pose.orientation.w = 1.0
+        ee_target.pose.position.x = action[0]
+        ee_target.pose.position.y = action[1]
+        ee_target.pose.position.z = action[2]
+        result = self.ee_traj_client(ee_target)
+
+        return True
+
+    def set_trajectory_joints(self, initial_qpos):
+        joint_point = JointTrajRequest()
+        joint_point.point.positions = [None] * 7
+        joint_point.point.positions[0] = initial_qpos["r_ur5_arm_shoulder_pan_joint"]
+        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_shoulder_lift_joint"]
+        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_elbow_joint"]
+        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_1_joint"]
+        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_2_joint"]
+        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_3_joint"]
+
+        result = self.joint_traj_client(joint_point)
+
+        return True
+
+    def get_ee_pose(self):
+        gripper_pose_req = EePoseRequest()
+        gripper_pose = self.ee_pose_client(gripper_pose_req)
+
+        return gripper_pose
+    
+    def get_ee_rpy(self):
+        gripper_rpy_req = EeRpyRequest()
+        gripper_rpy = self.ee_rpy_client(gripper_rpy_req)
+
+        return gripper_rpy
+
+
 
     # Env methods
     # ----------------------------

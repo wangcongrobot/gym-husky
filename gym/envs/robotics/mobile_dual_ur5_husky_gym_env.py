@@ -3,15 +3,13 @@ import numpy as np
 from gym.envs.robotics import rotations, robot_gym_env, utils
 
 
-
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
 
-
-class HDTArmEnv(robot_gym_env.RobotGymEnv):
-    """Superclass for all hdt underwater arm environments.
+class MobileDualUR5HuskyGymEnv(robot_gym_env.RobotGymEnv):
+    """Superclass for all Dual_UR5_Husky environments.
     """
 
     def __init__(
@@ -19,7 +17,7 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         has_object, target_in_the_air, target_offset, obj_range, target_range,
         distance_threshold, initial_qpos, reward_type, n_actions,
     ):
-        """Initializes a new hdt underwater arm environment.
+        """Initializes a new Dual_UR5_Husky environment.
 
         Args:
             model_path (string): path to the environments XML file
@@ -48,20 +46,15 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         self.n_actions = n_actions
 
         self.arm_dof = 3
-        self.base_dof = 3
         self.gripper_dof = 1
         # self.n_actions = self.arm_dof + self.gripper_dof
         
         self.gripper_actual_dof = 4
         self.gripper_close = False
 
-        self.base_init_pos = np.array([0, 0, 0])
-        self.gripper_init_pos = np.array([1.13220711e+00, 7.99837829e-05, 1.04505060e+00])
-        # self.gripper_init_rot = np.array([7.07106844e-01, -5.26932429e-05,  6.41879802e-05, -7.07106713e-01])
-        self.gripper_init_rot = np.array([0.707, 0, 0, 0.707])
-        self.gripper_init_rot = np.array([0.5, 0.5, 0.5, -0.5])
+        self.husky_init_pos = [0,0]
 
-        super(HDTArmEnv, self).__init__(
+        super(MobileDualUR5HuskyGymEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=self.n_actions,
             initial_qpos=initial_qpos)
 
@@ -308,14 +301,14 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         self.gripper_close = False
         if np.linalg.norm(grip_obj_pos) < 0.1:
             # reward_grasping += 0.5
-            if np.linalg.norm(grip_obj_pos) < 0.08:
+            if np.linalg.norm(grip_obj_pos) < 0.05:
                 # reward_grasping += 1.0
                 self.gripper_close = True
                 # stage 1: approaching and grasping/lifting
-                if object_pos[2] > 0.77: # table hight + object hight + lift distance
+                if object_pos[2] > 0.37: # table hight + object hight + lift distance
                     # grasping success
                     reward_grasping += 10.0
-                    if object_pos[2] > 0.8:
+                    if object_pos[2] > 0.5:
                         reward_grasping += 100.0
                         _is_success = True
                         # if object_pos[2] > 0.5:
@@ -415,17 +408,21 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         action = action.copy()  # ensure that we don't change the action outside of this scope
         print("_set_action:", action)
         pos_ctrl, base_ctrl, gripper_ctrl = action[:3], action[3:-1], action[-1]
+        # pos_ctrl, gripper_ctrl = action[:3], action[3:]
 
         pos_ctrl *= 0.03  # limit maximum change in position
         base_ctrl *= 0.01
-
-        rot_ctrl = self.gripper_init_rot # fixed rotation of the end effector, expressed as a quaternion
-
+        # rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
+        rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
+        # rot_ctrl = [0.707, 0.0, 0.0, -0.707] # (0 0 -90)
+        # rot_ctrl = np.array([0.5, -0.5, 0.5, -0.5]) #(-90, 90, 0)
+        # rot_ctrl = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
+        # rot_ctrl = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
+        # gripper_ctrl = np.array([gripper_ctrl, gripper_ctrl])
         if self.gripper_close:
             gripper_ctrl = -1.0
         else:
             gripper_ctrl = 1.0
-
         gripper_ctrl = self.gripper_format_action(gripper_ctrl)
         # assert gripper_ctrl.shape == (2,)
         assert gripper_ctrl.shape == (self.gripper_actual_dof,)
@@ -475,13 +472,6 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         #     'achieved_goal': achieved_goal.copy(),
         #     'desired_goal': self.goal.copy(),
         # }
-        # return np.concatenate([
-        #     self.sim.data.qpos.flat[:7],
-        #     self.sim.data.qvel.flat[:7],
-        #     self.get_body_com("r_wrist_roll_link"),
-        #     self.get_body_com("ball"),
-        #     self.get_body_com("goal"),
-        # ])
 
     def _viewer_setup(self):
         body_id = self.sim.model.body_name2id('r_gripper_palm_link')
@@ -508,35 +498,40 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
 
-            object_xpos = np.array([1., 0.]) # + self.np_random.uniform(-0.02, 0.07, size=2)
-            object_xpos[0] += self.np_random.uniform(-0.1, 0.1)
-            object_xpos[1] += self.np_random.uniform(-0.1, 0.1)
+            object_xpos = np.array([0.7, -0.5]) # + self.np_random.uniform(-0.02, 0.07, size=2)
+            object_xpos[0] += self.np_random.uniform(-0.07, 0.4)
+            object_xpos[1] += self.np_random.uniform(-0.25, 0.2)
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')
             # object_qpos1 = self.sim.data.get_joint_qpos('object1:joint')
             assert object_qpos.shape == (7,)
             print("object_xpos0: ", object_xpos)
             # print("object1 pos: ", object_qpos1)
             object_qpos[:2] = object_xpos
-            object_qpos[2] = 0.8
+            object_qpos[2] = 0.5
             # object_qpos[0] += 0.3
             # object_qpos[1] -= 0.1
             print("set_joint_qpos object_qpos: ", object_qpos)
             self.sim.data.set_joint_qpos('object0:joint', object_qpos)
             # print("get_body_xquat: ", self.sim.data.get_body_xquat('r_gripper_palm_link'))
 
+        # set random gripper position
+        # for i in range(3):
+        #     gripper_target[i] += self.np_random.uniform(-0.2, 0.2)
+        # print("gripper target random: ", gripper_target)
+ 
+
         # set random husky initial position
-        base_ctrl = [0.0, 0.0, 0.0]
-        base_ctrl[0] += self.np_random.uniform(-0.1, 0.1) # position
-        base_ctrl[1] += self.np_random.uniform(-0.1, 0.1) # rotation
-        base_ctrl[1] += self.np_random.uniform(-0.1, 0.1) # rotation
+        base_ctrl = [0.0, 0.0]
+        base_ctrl[0] += self.np_random.uniform(-1.0, -0.6) # position
+        base_ctrl[1] += self.np_random.uniform(-0.2, 0.2) # rotation
         gripper_control = self.np_random.uniform(-1.0, 1.0)
         gripper_control = self.gripper_format_action(gripper_control)
 
-        gripper_target = self.gripper_init_pos
+        gripper_target = np.array([0.5, -0.3, 0.6])
         gripper_target[0] += base_ctrl[0]
-        gripper_rotation = self.gripper_init_rot
+        gripper_rotation = np.array([0, 0.707, 0.707, 0]) #(0, 0, -90)
         # for i in range(3):
-        gripper_target[0] += self.np_random.uniform(-0.1, 0.1) # x
+        gripper_target[0] += self.np_random.uniform(-0.0, 0.1) # x
         gripper_target[1] += self.np_random.uniform(-0.1, 0.1) # y
         gripper_target[2] += self.np_random.uniform(-0.1, 0.1) # z
         self.sim.data.set_mocap_pos('gripper_r:mocap', gripper_target)
@@ -547,7 +542,7 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         utils.ctrl_set_action(self.sim, action) # base control + gripper control
         # utils.mocap_set_action(self.sim, action) # arm control in cartesion (x, y, z)
 
-        for _ in range(10):
+        for _ in range(15):
             self.sim.step()
 
         self.sim.forward()
@@ -583,11 +578,11 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         # gripper_rotation = np.array([-0.82031777, -0.33347336, -0.32553968,  0.33150896])
 
         # gripper_target = np.array([0.9, -0.3, 0.6])
-        gripper_target = self.gripper_init_pos
+        gripper_target = np.array([0.5, -0.3, 0.6])
         # gripper_rotation = np.array([0.5, -0.5, -0.5, -0.5]) #(-90, 0, -90)
         # gripper_rotation = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
         # gripper_rotation = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
-        gripper_rotation = self.gripper_init_rot
+        gripper_rotation = np.array([0, 0.707, 0.707, 0]) #(0, 0, -90)
         # gripper_rotation = np.array([1.0, 0, 0, 0])
         # set random gripper position
         # for i in range(3):
@@ -595,8 +590,19 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         # print("gripper target random: ", gripper_target)
         self.sim.data.set_mocap_pos('gripper_r:mocap', gripper_target)
         self.sim.data.set_mocap_quat('gripper_r:mocap', gripper_rotation)
-        # for _ in range(10):
-        #     self.sim.step()
+        for _ in range(10):
+            self.sim.step()
+
+        # # set random end-effector position
+        # end_effector_pos = self.initial_gripper_xpos
+        # rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
+        # end_effector_pos = np.concatenate([end_effector_pos, rot_ctrl])
+        # print("end_effector_pos: ", end_effector_pos)
+        # for i in range(3):
+        #     end_effector_pos[i] = self.initial_gripper_xpos[i] + self.np_random.uniform(-0.1, 0.1)
+        # utils.mocap_set_action(self.sim, end_effector_pos) # arm control in cartesion (x, y, z)
+        # # for _ in range(100):
+        #     # self.sim.step()
 
         # Extract information for sampling goals.
         self.initial_gripper_xpos = self.sim.data.get_site_xpos('r_grip_site').copy()
@@ -604,9 +610,9 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
             self.height_offset = self.sim.data.get_site_xpos('object0')[2]
 
     def render(self, mode='human', width=500, height=500):
-        return super(HDTArmEnv, self).render(mode, width, height)
+        return super(DualUR5HuskyEnv, self).render(mode, width, height)
 
-    ### Add custom function
+    ### Add function for dual_ur5_husky
 
     def gripper_format_action(self, action):
         """ Given (-1,1) abstract control as np-array return the (-1,1) control signals
@@ -614,6 +620,16 @@ class HDTArmEnv(robot_gym_env.RobotGymEnv):
         Args:
             action: 1 => open, -1 => closed
         """
-        movement = np.array([-1, 1, 1, 1])
+        movement = np.array([1, 1, 1, 0])
         return -1 * movement * action
 
+    def gripper_format_action11(self, action):
+        """ Given (-1,1) abstract control as np-array return the (-1,1) control signals
+        for underlying actuators as 1-d np array
+        Args:
+            action: 1 => open, -1 => closed
+        """
+        movement = np.array([0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1])
+        return -1 * movement * action
+
+    
