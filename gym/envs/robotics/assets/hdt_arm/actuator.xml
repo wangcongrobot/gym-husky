@@ -1,0 +1,90 @@
+<mujoco>
+  <tendon>
+		<!--index tendons-->
+		<fixed name="index12_cpl" range="0 1">
+			<joint joint="index_prox"  coef="1"/>
+			<joint joint="index_med"  coef="-1"/>
+		</fixed>
+		<fixed name="index23_cpl" range="0 1">
+			<joint joint="index_med"  coef="1"/>
+			<joint joint="index_dist"  coef="-1"/>
+		</fixed>
+
+		<!--ring tendons-->
+    <fixed name="ring_12_cpl" range="0 1">
+			<joint joint="ring_prox"  coef="1"/>
+			<joint joint="ring_med"  coef="-1"/>
+		</fixed>
+		<fixed name="ring_23_cpl" range="0 1">
+			<joint joint="ring_med"  coef="1"/>
+			<joint joint="ring_dist"  coef="-1"/>
+		</fixed>
+
+		<!--thumb tendons-->
+    <fixed name="thumb_12_cpl" range="0 1">
+			<joint joint="thumb_prox"  coef="1"/>
+			<joint joint="thumb_med"  coef="-1"/>
+		</fixed>
+		<fixed name="thumb_23_cpl" range="0 1">
+			<joint joint="thumb_med"  coef="1"/>
+			<joint joint="thumb_dist"  coef="-1"/>
+		</fixed>
+	</tendon>
+
+  <contact>
+
+    <exclude body1="thumb_base" body2="thumb_prox"/>
+    <exclude body1="thumb_prox" body2="thumb_med"/>
+    <exclude body1="thumb_med" body2="thumb_dist"/>
+
+    <exclude body1="thumb_base" body2="ring_prox"/>
+    <exclude body1="ring_prox" body2="ring_med"/>
+    <exclude body1="ring_med" body2="ring_dist"/>
+
+    <exclude body1="thumb_base" body2="index_prox"/>
+    <exclude body1="index_prox" body2="index_med"/>
+    <exclude body1="index_med" body2="index_dist"/>
+
+  </contact>
+
+  <equality>
+		<!-- GRIPPER Couplings -->
+		<tendon name="index12_cpl" 	tendon1="index12_cpl"/>
+		<tendon name="index23_cpl" 	tendon1="index23_cpl"/>
+
+    <tendon name="ring_12_cpl" 	tendon1="ring_12_cpl"/>
+		<tendon name="ring_23_cpl" 	tendon1="ring_23_cpl"/>
+
+    <tendon name="thumb_12_cpl" 	tendon1="thumb_12_cpl"/>
+		<tendon name="thumb_23_cpl" 	tendon1="thumb_23_cpl"/>
+
+		<!-- SCISSOR Coupling -->
+		<!-- <joint name="finger_12_scissor" joint1="r_palm_finger_2_joint" joint2="r_palm_finger_1_joint" polycoef="0 -1 0 0 0"/> -->
+	</equality>
+
+  <!-- hdt arm base position control -->
+  <actuator>
+		  <position ctrllimited="true" ctrlrange="-0.2 0.2" joint="base_x_slide_joint" kp="300" name="base_x_slide_joint" user="1"></position>
+      <position ctrllimited="true" ctrlrange="-0.2 0.2" joint="base_y_slide_joint" kp="300" name="base_y_slide_joint" user="1"></position>
+      <position ctrllimited="true" ctrlrange="-0.2 0.2" joint="base_z_slide_joint" kp="300" name="base_z_slide_joint" user="1"></position>
+      <!-- <position ctrllimited="true" ctrlrange="-0.57 0.57" kp="30000" joint="base_x_hinge_joint" name="base_x_hinge_joint" user="1" />
+      <position ctrllimited="true" ctrlrange="-0.57 0.57" kp="30000" joint="base_y_hinge_joint" name="base_y_hinge_joint" user="1" />
+      <position ctrllimited="true" ctrlrange="-0.57 0.57" kp="30000" joint="base_z_hinge_joint" name="base_z_hinge_joint" user="1" /> -->
+		<!-- hdt arm base velocity control -->
+		<!-- <velocity ctrllimited="true" ctrlrange="-0.01 0.01" joint="base_x_slide_joint" kp="3000" name="base_x_slide_joint" user="1" ></velocity> -->
+	</actuator>
+
+  <!-- hdt arm gripper position control -->
+  <actuator>
+    <position ctrllimited="true" ctrlrange="-1.5708 0" joint="thumb_base" kp="100" name="thumb_base" forcelimited="true" forcerange="-20 20"/>    
+    <position ctrllimited="true" ctrlrange="-0. 1.5708" joint="thumb_prox" kp="100" name="thumb_prox" forcelimited="true" forcerange="-20 20"/>
+    <position ctrllimited="true" ctrlrange="-0. 1.5708" joint="index_prox" kp="100" name="index_prox" forcelimited="true" forcerange="-20 20"/>
+    <position ctrllimited="true" ctrlrange="-0. 1.5708" joint="ring_prox" kp="100" name="ring_prox" forcelimited="true" forcerange="-20 20"/>  
+
+    <!-- force control mode -->
+    <!-- <motor name='thumb_prox' ctrllimited="true" joint='thumb_prox' ctrlrange='0 .8' gear="10"/>
+    <motor name='index_prox' ctrllimited="true" joint='index_prox' ctrlrange='0 .8' gear="10"/>
+    <motor name='ring_prox'  ctrllimited="true" joint='ring_prox' ctrlrange='0 .8' gear="10"/>
+    <motor name='thumb_base' ctrllimited="true" joint='thumb_base' ctrlrange="-0.8 0.8" gear="10"/>   -->
+  </actuator> 
+</mujoco>

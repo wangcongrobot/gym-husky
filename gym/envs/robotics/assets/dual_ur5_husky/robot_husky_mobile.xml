@@ -2,9 +2,9 @@
 
 	<body mocap="true" name="gripper_r:mocap" pos="0 0 0" >
 		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 0.5 0.0 0.5" size="0.005 0.005 0.005" type="box" group="1"></geom>
-		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="1.0 0.0 0.0 0.5" size="0.5 0.005 0.005" type="box" group="1"></geom>
-		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 1.0 0.0 0.5" size="0.005 0.5 0.005" type="box" group="1"></geom>
-		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 0.0 1.0 0.5" size="0.005 0.005 0.5" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="1.0 0.0 0.0 0.5" size="0.15 0.005 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 1.0 0.0 0.5" size="0.005 0.15 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 0.0 1.0 0.5" size="0.005 0.005 0.15" type="box" group="1"></geom>
 	</body>
 	<!-- <body mocap="true" name="gripper_l:mocap" pos="0 0 0" >
 		<geom conaffinity="0" contype="0" pos="0 0.1 0" rgba="0.0 0.5 0.0 0.5" size="0.005 0.005 0.005" type="box"></geom>
@@ -91,6 +91,7 @@
 
         <!-- left ur5 -->
         <!-- <include file="robot_ur5_l.xml"></include> -->
+        <include file="robot_ur5_l_store.xml"></include>
 
         <!-- right ur5 -->
         <include file="robot_ur5_r.xml"></include>

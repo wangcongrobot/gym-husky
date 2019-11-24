@@ -398,6 +398,22 @@ for reward_type in ['sparse', 'dense']:
         max_episode_steps=100,
     )
 
+    # hdt arm 
+    register(
+        id='HDTArmPickAndPlace{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:HDTArmPickAndPlaceEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
+    # hdt arm 
+    register(
+        id='HDTArmPickAndPlaceGoal{}-v1'.format(suffix),
+        entry_point='gym.envs.robotics:HDTArmPickAndPlaceGoalEnv',
+        kwargs=kwargs,
+        max_episode_steps=100,
+    )
+
     # Hand
     register(
         id='HandReach{}-v0'.format(suffix),

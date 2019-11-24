@@ -1,0 +1,76 @@
+<mujoco>
+	<body mocap="true" name="gripper_r:mocap" pos="0 0 0" >
+		<geom conaffinity="0" contype="0" pos="0.05 -0.05 0" rgba="0.0 0.5 0.0 0.5" size="0.005 0.005 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0.05 -0.05 0" rgba="1.0 0.0 0.0 0.5" size="0.5 0.005 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0.05 -0.05 0" rgba="0.0 1.0 0.0 0.5" size="0.005 0.5 0.005" type="box" group="1"></geom>
+		<geom conaffinity="0" contype="0" pos="0.05 -0.05 0" rgba="0.0 0.0 1.0 0.5" size="0.005 0.005 0.5" type="box" group="1"></geom>
+	</body>
+
+    <body name="hdt_arm_base_link" pos="0 0 1.5" quat="0.707107 0 0 -0.707107" childclass="ARM">
+
+    	<joint armature="0.0001" axis="1 0 0" damping="1e+11" name="robot0:slide0" pos="0 0 0" type="slide"></joint>
+		<joint armature="0.0001" axis="0 1 0" damping="1e+11" name="robot0:slide1" pos="0 0 0" type="slide"></joint>
+		<joint armature="0.0001" axis="0 0 1" damping="1e+11" name="robot0:slide2" pos="0 0 0" type="slide"></joint>
+
+		<!-- control the hdt arm base -->
+		<joint name="base_x_slide_joint" type="slide" pos="0 0 0" axis="1 0 0" limited="true" range="-0.2 0.2" damping="30000000" />
+        <joint name="base_y_slide_joint" type="slide" pos="0 0 0" axis="0 1 0" limited="true" range="-0.2 0.2" damping="30000000" />
+        <joint name="base_z_slide_joint" type="slide" pos="0 0 0" axis="0 0 1" limited="true" range="-0.2 0.2" damping="30000000" />
+        <!-- <joint name="base_x_hinge_joint" type="hinge" pos="0 0 0" axis="1 0 0" limited="true" range="-0.57 0.57" damping="3000" />
+        <joint name="base_y_hinge_joint" type="hinge" pos="0 0 0" axis="0 1 0" limited="true" range="-0.57 0.57" damping="3000" />
+        <joint name="base_z_hinge_joint" type="hinge" pos="0 0 0" axis="0 0 1" limited="true" range="-0.57 0.57" damping="3000" /> -->
+
+        <geom type="mesh" mesh="hdt_mk3_m_ik" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0 0.196078 0 1" mesh="hdt_mk3_m_ik" />
+        <geom pos="0 0 -0.04695" type="mesh" mesh="hdt_mk3_m_0" />
+        <geom pos="0 0 -0.04695" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_0" />
+
+        <body name="link1" pos="0 0 -0.04715">
+            <inertial pos="-0.0445965 0 -0.0344774" quat="0.707095 -0.00408362 -0.00408362 0.707095" mass="1.6755" diaginertia="0.00496229 0.00428543 0.00214575" />
+            <joint name="joint1" pos="0 0 0" axis="0 0 1" limited="true" range="-2.0944 2.0944" damping="1.0" armature="0.001" />
+            <geom type="mesh" mesh="hdt_mk3_m_1" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_1" />
+            <geom pos="0 0 -0.08651" type="mesh" mesh="hdt_mk3_m_2a" />
+            <geom pos="0 0 -0.08651" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_2a" />
+            <body name="link2b" pos="0.0257 -0.042 -0.17351">
+                <inertial pos="-0.0200099 0.0326629 -0.172777" quat="0.904342 0.084665 0.0102102 0.418203" mass="3.14405" diaginertia="0.0342235 0.0338523 0.00251707" />
+                <joint name="joint2" pos="0 0 0" axis="1 0 0" limited="true" range="-3.1416 1.5708" damping="1.0" armature="0.001" />
+                <geom type="mesh" mesh="hdt_mk3_m_2b" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_2b" />
+                <geom pos="-0.02573 0.042 -0.107" type="mesh" mesh="hdt_mk3_m_3" />
+                <geom pos="-0.02573 0.042 -0.107" type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_3" />
+                <geom pos="-0.02573 0.042 -0.25011" type="mesh" mesh="hdt_mk3_m_4a" />
+                <geom pos="-0.02573 0.042 -0.25011" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_4a" />
+                <body name="link4b" pos="-3e-05 0 -0.33711">
+                    <inertial pos="0 -0.020181 0" quat="0.707107 0.707107 0 0" mass="0.698963" diaginertia="0.00094182 0.00088116 0.00032992" />
+                    <joint name="joint4" pos="0 0 0" axis="1 0 0" limited="true" range="-1.5708 3.1416" damping="1.0" armature="0.001" />
+                    <geom type="mesh" mesh="hdt_mk3_m_4b" />
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_4b" />
+                    <body name="link5" pos="-0.02573 -0.1062 -0.042">
+                        <inertial pos="0 -0.0723409 0" quat="0.5 0.5 -0.5 0.5" mass="1.50833" diaginertia="0.00408471 0.00391397 0.00119102" />
+                        <joint name="joint5" pos="0 0 0" axis="0 -1 0" limited="true" range="-2.0944 2.0944" damping="1.0" armature="0.001" />
+                        <geom type="mesh" mesh="hdt_mk3_m_5" />
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_5" />
+                        <geom pos="0 -0.08651 0" type="mesh" mesh="hdt_mk3_m_6a" />
+                        <geom pos="0 -0.08651 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_6a" />
+                        <body name="link6b" pos="0.02393 -0.13751 0">
+                            <inertial pos="0 -0.03855 0" quat="0.707107 0.707107 0 0" mass="0.99934" diaginertia="0.00190524 0.00190524 0.000474765" />
+                            <joint name="joint6" pos="0 0 0" axis="1 0 0" limited="true" range="-1.5708 1.5708" damping="1.0" armature="0.001" />
+                            <geom type="mesh" mesh="hdt_mk3_m_6b" />
+                            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_6b" />
+                            <body name="link7" pos="-0.02395 -0.082 -0.0279">
+                                <inertial pos="0.011538 -0.157503 0.00420786" quat="0.717957 0.693007 0.0519835 -0.0397044" mass="2.74632" diaginertia="0.0240513 0.0231018 0.00559065" />
+                                <joint name="joint7" pos="0 0 0" axis="0 0 1" limited="true" range="-1.5708 1.5708" damping="1.0" armature="0.001" />
+                                <geom type="mesh" mesh="hdt_mk3_m_7" name="hdt_mk3_m_7" rgba="0 0 1 1"/>
+                                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_7" />
+                                
+                                <include file="gripper.xml" ></include>
+
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </body>
+</mujoco>

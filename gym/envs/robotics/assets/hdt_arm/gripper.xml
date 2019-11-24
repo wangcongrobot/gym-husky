@@ -1,0 +1,86 @@
+<mujoco>
+
+    <body name="r_gripper_palm_link" pos="-1e-05 -0.16629 0.02793">
+        <site name="r_grip_site" pos="0.05 -0.05 0" size="0.01" rgba="1 0 0 1" type="sphere" group="1"/>
+
+        <geom type="mesh" mesh="hdt_mk3_m_palm_pad" name="hdt_mk2_m_palm_pad" rgba="1 0 0 1"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_palm_pad" />
+    </body>
+
+    <body name="palm">
+        <geom pos="-1e-05 -0.07 0.02793" type="mesh" mesh="hdt_mk3_m_palm" name="hdt_mk3_m_palm" rgba="0 1 0 1"/>
+        <geom pos="-1e-05 -0.07 0.02793" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_palm" />
+
+        <geom pos="-4.62e-05 -0.11079 -0.023044" type="mesh" mesh="hdt_mk3_m_camera_bracket" name="hdt_mk3_m_camera_bracket" rgba="0 1 1 1"/>
+        <geom pos="-4.62e-05 -0.11079 -0.023044" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_camera_bracket" />
+
+        <geom pos="0.0222334 -0.0943304 -0.0421013" quat="0.905128 -0.277926 -0.18527 0.263011" type="mesh" mesh="hdt_mk3_m_camera" name="hdt_mk3_m_camera" rgba="1 1 0 1"/>
+        <geom pos="0.0222334 -0.0943304 -0.0421013" quat="0.905128 -0.277926 -0.18527 0.263011" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.25098 0.25098 0.25098 1" mesh="hdt_mk3_m_camera" />
+    </body>
+
+    <body name="thumb_base" pos="-4.62e-05 -0.128 0.045715">
+        <inertial pos="0 -0.0758237 -0.00179049" quat="0.633597 0.773663 0.000533945 8.60911e-05" mass="0.65318" diaginertia="0.00205483 0.00172361 0.000596046" />
+        <joint name="thumb_base" pos="0 0 0" axis="0 -1 0" limited="true" range="-1.5708 1.5708" damping="1.0" armature="0.001" />
+        <geom type="mesh" mesh="hdt_mk3_m_thumb_base" name="hdt_mk3_m_thumb_base" rgba="1 0 0 1"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="0.686275 0.658824 0.639216 1" mesh="hdt_mk3_m_thumb_base" />
+        <geom type="mesh" mesh="hdt_mk3_m_thumb_pad" name="hdt_mk3_m_thumb_pad" rgba="0 0 1 1"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_thumb_pad" />
+
+        <body name="thumb_prox" pos="0.00879 -0.021848 0.057028">
+            <inertial pos="0 0.001 0.02063" quat="0.707033 -0.0102215 0.0102215 0.707033" mass="0.02523" diaginertia="5.37605e-06 4.718e-06 2.91895e-06" />
+            <joint name="thumb_prox" pos="0 0 0" axis="1 0 0" limited="true" range="-0.7854 1.5708" damping="1.0" armature="0.001" />
+            <geom type="mesh" mesh="hdt_mk3_m_thumb_prox" name="hdt_mk3_m_thumb_prox" rgba="0 0 1 1"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_thumb_prox" />
+            <body name="thumb_med" pos="0 -0.0005 0.0435">
+                <inertial pos="0 -0.00353 0.01162" quat="0.705326 0.0501467 -0.0501467 0.705326" mass="0.0085" diaginertia="1.65272e-06 1.099e-06 9.6728e-07" />
+                <joint name="thumb_med" pos="0 0 0" axis="1 0 0" limited="true" range="0 1.5708" damping="1.0" armature="0.001" />
+                <geom type="mesh" mesh="hdt_mk3_m_thumb_med" name="hdt_mk3_m_thumb_med"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 1 1 1" mesh="hdt_mk3_m_thumb_med" />
+                <body name="thumb_dist" pos="0 -0.00045 0.0277">
+                    <inertial pos="0 -0.00131 0.01323" quat="0.5 0.5 0.5 0.5" mass="0.0092" diaginertia="8.37e-07 6.95e-07 6.6e-07" />
+                    <joint name="thumb_dist" pos="0 0 0" axis="1 0 0" limited="true" range="0 1.5708" damping="1.0" armature="0.001" />
+                    <geom type="mesh" mesh="hdt_mk3_m_thumb_dist" name="hdt_mk3_m_thumb_dist"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_thumb_dist" />
+                </body>
+            </body>
+        </body>
+    </body>
+
+    <body name="index_prox" pos="-4.62e-05 -0.235998 0.0637253">
+        <inertial pos="-0.001 -0.02063 0" quat="0.707033 0.707033 -0.0102215 -0.0102215" mass="0.02523" diaginertia="5.37605e-06 4.718e-06 2.91895e-06" />
+        <joint name="index_prox" pos="0 0 0" axis="0 0 1" limited="true" range="-0.7854 1.5708" damping="1.0" armature="0.001" />
+        <geom type="mesh" mesh="hdt_6dof_index_prox" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_finger_prox" />
+        <body name="index_med" pos="-0.0005 -0.0435 0">
+            <inertial pos="0.00353 -0.01162 0" quat="0.705326 0.705326 0.0501467 0.0501467" mass="0.0085" diaginertia="1.65272e-06 1.099e-06 9.6728e-07" />
+            <joint name="index_med" pos="0 0 0" axis="0 0 1" limited="true" range="0 1.5708" damping="1.0" armature="0.001" />
+            <geom type="mesh" mesh="hdt_mk3_m_finger_med" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 1 1 1" mesh="hdt_mk3_m_finger_med" />
+            <body name="index_dist" pos="0.00045 -0.0277 0">
+                <inertial pos="0.00131 -0.01323 0" mass="0.0092" diaginertia="8.37e-07 6.95e-07 6.6e-07" />
+                <joint name="index_dist" pos="0 0 0" axis="0 0 1" limited="true" range="0 1.5708" damping="1.0" armature="0.001" />
+                <geom type="mesh" mesh="hdt_mk3_m_finger_dist" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_finger_dist" />
+            </body>
+        </body>
+    </body>
+
+    <body name="ring_prox" pos="-4.62e-05 -0.235998 0.0097147">
+        <inertial pos="-0.001 -0.02063 0" quat="0.707033 0.707033 -0.0102215 -0.0102215" mass="0.02523" diaginertia="5.37605e-06 4.718e-06 2.91895e-06" />
+        <joint name="ring_prox" pos="0 0 0" axis="0 0 1" limited="true" range="-0.7854 1.5708" damping="1.0" armature="0.001"/>
+        <geom type="mesh" mesh="hdt_6dof_ring_prox" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_finger_prox" />
+        <body name="ring_med" pos="-0.0005 -0.0435 0">
+            <inertial pos="0.00353 -0.01162 0" quat="0.705326 0.705326 0.0501467 0.0501467" mass="0.0085" diaginertia="1.65272e-06 1.099e-06 9.6728e-07" />
+            <joint name="ring_med" pos="0 0 0" axis="0 0 1" limited="true" range="0 1.5708" damping="1.0" armature="0.001"/>
+            <geom type="mesh" mesh="hdt_mk3_m_finger_med" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 1 1 1" mesh="hdt_mk3_m_finger_med" />
+            <body name="ring_dist" pos="0.00045 -0.0277 0">
+                <inertial pos="0.00131 -0.01323 0" mass="0.0092" diaginertia="8.37e-07 6.95e-07 6.6e-07" />
+                <joint name="ring_dist" pos="0 0 0" axis="0 0 1" limited="true" range="0 1.5708" damping="1.0" armature="0.001"/>
+                <geom type="mesh" mesh="hdt_mk3_m_finger_dist" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.741176 0.0509804 1" mesh="hdt_mk3_m_finger_dist" />
+            </body>
+        </body>
+    </body>
+</mujoco>

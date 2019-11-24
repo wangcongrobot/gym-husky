@@ -1,9 +1,12 @@
 <mujoco>
     <asset>
-
-        <texture builtin="gradient" height="100" rgb1="1 1 1" rgb2="0 0 0" type="skybox" width="100"/>
+        <texture builtin="gradient" height="256" rgb1=".9 .9 1." rgb2=".2 .3 .4" type="skybox" width="256"/>
+        <texture builtin="checker" height="512" name="texplane" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" type="2d" width="512"/>
+        <material name="floorplane" reflectance="0.5" texrepeat="1 1" texture="texplane" texuniform="true"/>
+        
+        <!-- <texture builtin="gradient" height="100" rgb1="1 1 1" rgb2="0 0 0" type="skybox" width="100"/> -->
         <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
-        <texture builtin="checker" height="100" name="texplane" rgb1="0 0 0" rgb2="0.8 0.8 0.8" type="2d" width="100"/>
+        <!-- <texture builtin="checker" height="100" name="texplane" rgb1="0 0 0" rgb2="0.8 0.8 0.8" type="2d" width="100"/> -->
         <texture type="skybox" builtin="gradient" rgb1="0.44 0.85 0.56" rgb2="0.46 0.87 0.58" width="32" height="32"></texture>
         <texture name="texture_block" file="block.png" gridsize="3 4" gridlayout=".U..LFRB.D.."></texture>
 
@@ -44,7 +47,21 @@
         <mesh name="collision_palm" file="collision_palm.STL" />
 
     </asset>
-
+    <asset>
+        <mesh file="bottle.stl" name="bottle_mesh"  scale="2.0 2.0 2.0"/>
+        <texture type="skybox" file="glass.png" name="tex-glass"/>
+        <material name="glass" reflectance="0.5" texrepeat="5 5" texture="tex-glass" texuniform="true"/>
+    </asset>
+    <asset>
+        <mesh file="can.stl" name="can_mesh" scale="2.0 2.0 2.0" />
+        <texture file="can.png" name="tex-can"/>
+        <material name="coke" reflectance="0.7" texrepeat="5 5" texture="tex-can" texuniform="true"/>
+    </asset>
+    <asset>
+        <mesh file="milk.stl" name="milk_mesh" scale="2.0 2.0 2.0"/>
+        <texture file="ceramic.png" name="tex-ceramic"/>
+        <material name="ceramic" reflectance="0.5" texrepeat="1 1" texture="tex-ceramic" texuniform="true"/>
+    </asset>
     <equality>
         <!-- <weld body1="gripper_l:mocap" body2="l_gripper_palm_link" solimp="0.9 0.95 0.001" solref="0.02 1"></weld> -->
         <weld body2="gripper_r:mocap" body1="r_gripper_palm_link" solimp="0.9 0.95 0.001" solref="0.02 1"></weld>
@@ -182,9 +199,4 @@
         </default>
     </default>
 
-	<asset>
-		<mesh file="can.stl" name="can_mesh"/>
-		<texture file="../textures/can.png" name="tex-can"/>
-		<material name="coke" reflectance="0.7" texrepeat="5 5" texture="tex-can" texuniform="true"/>
-	</asset>
 </mujoco>
