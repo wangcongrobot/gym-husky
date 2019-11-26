@@ -1,6 +1,6 @@
 import numpy as np
 
-from gym.envs.robotics import rotations, robot_ros_env, utils
+from gym.envs.robotics import rotations, robot_ros_env, utils, utils_gripper
 
 class MobileDualUR5HuskyROSEnv(robot_ros_env.RobotROSEnv):
     """Superclass for all Dual_UR5_Husky environments.
@@ -163,13 +163,9 @@ class MobileDualUR5HuskyROSEnv(robot_ros_env.RobotROSEnv):
 
         pos_ctrl *= 0.03  # limit maximum change in position
         base_ctrl *= 0.01
-        # rot_ctrl = [1., 0., 1., 0.]  # fixed rotation of the end effector, expressed as a quaternion
-        rot_ctrl = [0, 0.707, 0.707, 0] #(0 0 0)
-        # rot_ctrl = [0.707, 0.0, 0.0, -0.707] # (0 0 -90)
-        # rot_ctrl = np.array([0.5, -0.5, 0.5, -0.5]) #(-90, 90, 0)
-        # rot_ctrl = np.array([0.5, 0.5, 0.5, -0.5]) #(90, 0, 90) gripper down
-        # rot_ctrl = np.array([0.707, 0.0, 0.0, -0.707]) #(0, 0, -90)
-        # gripper_ctrl = np.array([gripper_ctrl, gripper_ctrl])
+
+        rot_ctrl = [0, 0.707, 0.707, 0] # fixed rotation of the end effector, expressed as a quaternion
+
         if self.gripper_close:
             gripper_ctrl = -1.0
         else:
@@ -186,17 +182,82 @@ class MobileDualUR5HuskyROSEnv(robot_ros_env.RobotROSEnv):
         # utils.ctrl_set_action(self.sim, action) # base control + gripper control
         # utils.mocap_set_action(self.sim, action) # arm control in cartesion (x, y, z)
         self.set_trajectory_ee(action)
+        utils_gripper.gripper_control(action)
 
-    def _get_obs(self):
+    def _get_obs1(self):
         # positions
         grip_pos = self.get_ee_pose()
         grip_pos_array = np.array([grip_pos.pose.position.x, grip_pos.pose.position.y, grip_pos.pose.position.z])
-        # dt = self.sim.nsubsteps * self.sim.model.opt.timestep
+        dt = self.sim.nsubsteps * self.sim.model.opt.timestep
         # grip_velp = self.sim.data.get_site_xvelp('r_grip_site') * dt
         grip_rpy = self.get_ee_rpy()
         grip_velp = np.array([grip_rpy.y, grip_rpy.y])
         robot_qpos, robot_qvel = self.robot_get_obs(self.joints)
         # robot_qpos, robot_qvel = utils.robot_get_obs(self.sim)
+        if self.has_object:
+            object_pos = self.sim.data.get_site_xpos('object0')
+            # # rotations
+            object_rot = rotations.mat2euler(self.sim.data.get_site_xmat('object0'))
+            # # velocities
+            object_velp = self.sim.data.get_site_xvelp('object0') * dt
+            object_velr = self.sim.data.get_site_xvelr('object0') * dt
+            # # gripper state
+            # object_rel_pos = object_pos - grip_pos
+            object_rel_pos = 0.1 * object_pos
+            object_velp -= grip_velp
+
+        else:
+            object_pos = object_rot = object_velp = object_velr = object_rel_pos = np.zeros(0)
+        # gripper_state = robot_qpos[-2:]
+        gripper_state = robot_qpos[-13:-1]
+        gripper_vel = robot_qvel[-2:] * dt  # change to a scalar if the gripper is made symmetric
+
+        if not self.has_object:
+            achieved_goal = grip_pos.copy()
+        else:
+            achieved_goal = np.squeeze(object_pos.copy())
+        # obs = np.concatenate([
+            # grip_pos, 
+            # grip_pos_array,
+            # grip_rpy,
+            # grip_velp,
+            # robot_qpos,
+            # robot_qvel,
+            # object_pos.ravel(), 
+            # object_rel_pos.ravel(), 
+            # gripper_state, 
+            # object_rot.ravel(),
+            # object_velp.ravel(), 
+            # object_velr.ravel(), 
+            # grip_velp, 
+            # gripper_vel,
+        # ])
+
+        obs = np.concatenate([
+            grip_pos, 
+            object_pos.ravel(), 
+            object_rel_pos.ravel(), 
+            gripper_state, 
+            object_rot.ravel(),
+            object_velp.ravel(), 
+            object_velr.ravel(), 
+            grip_velp, 
+            gripper_vel,
+        ])
+
+        return obs
+
+        # return {
+        #     'observation': obs.copy(),
+        #     'achieved_goal': achieved_goal.copy(),
+        #     'desired_goal': self.goal.copy(),
+        # }
+    def _get_obs(self):
+        # positions
+        grip_pos = self.sim.data.get_site_xpos('r_grip_site')
+        dt = self.sim.nsubsteps * self.sim.model.opt.timestep
+        grip_velp = self.sim.data.get_site_xvelp('r_grip_site') * dt
+        robot_qpos, robot_qvel = utils.robot_get_obs(self.sim)
         if self.has_object:
             object_pos = self.sim.data.get_site_xpos('object0')
             # rotations
@@ -223,7 +284,6 @@ class MobileDualUR5HuskyROSEnv(robot_ros_env.RobotROSEnv):
         ])
 
         return obs
-
         # return {
         #     'observation': obs.copy(),
         #     'achieved_goal': achieved_goal.copy(),
@@ -355,6 +415,9 @@ class MobileDualUR5HuskyROSEnv(robot_ros_env.RobotROSEnv):
         """
         movement = np.array([1, 1, 1, 0])
         return -1 * movement * action
+
+        gripper_cmd = action[-1]
+
 
     def robot_get_obs(self, data):
         if data.position is not None and data.name:

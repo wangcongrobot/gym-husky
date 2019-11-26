@@ -18,6 +18,9 @@ from sensor_msgs.msg import JointState
 from nav_msgs.msg import Odometry
 from husky_train.srv import EePose, EePoseRequest, EeRpy, EeRpyRequest, EeTraj, EeTrajRequest, JointTraj, JointTrajRequest
 
+from robotiq_msg.msg import SModelRobotOutput
+from geometry_msgs.msg import Pose
+
 from collections import OrderedDict
 
 def convert_observation_to_space(observation):
@@ -64,22 +67,40 @@ class RobotROSEnv(gym.Env):
                           "r_ur5_arm_wrist_1_joint", 
                           "r_ur5_arm_wrist_2_joint", 
                           "r_ur5_arm_wrist_3_joint"]
+        # self.joint_values = 
 
         self._check_all_systems_ready()
         
         self.joint_states_sub = rospy.Subscriber(self.JOINT_STATES_SUBSCRIBER, JointState, self.joints_callback)
         self.joints = JointState()
 
+        # Service
         self.ee_traj_client = rospy.ServiceProxy('/ee_traj_srv', EeTraj)
         self.joint_traj_client = rospy.ServiceProxy('/joint_traj_srv', JointTraj)
         self.ee_pose_client = rospy.ServiceProxy('/ee_pose_srv', EePose)
         self.ee_rpy_client = rospy.ServiceProxy('/ee_rpy_srv', EeRpy)
 
+        # Publisher
+        GRIPPER_CMD = 'right_hand/command'
+        self.gripper_cmd = rospy.Publisher(GRIPPER_CMD,SModelRobotOutput)
+
+
+        # Subscribe
+        OBJECT_TARGET = '/object_target'
+        self.object_target = rospy.Subscriber(OBJECT_TARGET, Pose)
+
+        # joint names
+        JOINT1 = 'r_ur5_arm_shoulder_pan_joint'
+        JOINT2 = 'r_ur5_arm_shoulder_lift_joint'
+        JOINT3 = 'r_ur5_arm_elbow_joint'
+        JOINT4 = 'r_ur5_arm_wrist_1_joint'
+        JOINT5 = 'r_ur5_arm_wrist_2_joint'
+        JOINT6 = 'r_ur5_arm_wrist_3_joint'
+
+
+
         self.controllers_list = []
         self.robot_name_space = ""
-
-
-
 
         self.seed()
         self._env_setup(initial_qpos=initial_qpos)
@@ -88,14 +109,7 @@ class RobotROSEnv(gym.Env):
         self.goal = self._sample_goal()
         obs = self._get_obs()
         self.action_space = spaces.Box(-1., 1., shape=(n_actions,), dtype='float32')
-        # self.observation_space = spaces.Dict(dict(
-        #     desired_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
-        #     achieved_goal=spaces.Box(-np.inf, np.inf, shape=obs['achieved_goal'].shape, dtype='float32'),
-        #     observation=spaces.Box(-np.inf, np.inf, shape=obs['observation'].shape, dtype='float32'),
-        # ))
         self.observation_space = convert_observation_to_space(obs)
-        # self.observation_space = spaces.Box(-np.inf, np.inf, shape=obs['observation'].shape, dtype='float32')
-        # self.observation_space = obs
 
     @property
     def dt(self):
@@ -136,7 +150,7 @@ class RobotROSEnv(gym.Env):
         return self.joints.name
 
     def set_trajectory_ee(self, action):
-        ee_target = EdTrajRequest()
+        ee_target = EeTrajRequest()
         ee_target.pose.orientation.w = 1.0
         ee_target.pose.position.x = action[0]
         ee_target.pose.position.y = action[1]
@@ -146,16 +160,16 @@ class RobotROSEnv(gym.Env):
         return True
 
     def set_trajectory_joints(self, initial_qpos):
-        joint_point = JointTrajRequest()
-        joint_point.point.positions = [None] * 7
-        joint_point.point.positions[0] = initial_qpos["r_ur5_arm_shoulder_pan_joint"]
-        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_shoulder_lift_joint"]
-        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_elbow_joint"]
-        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_1_joint"]
-        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_2_joint"]
-        joint_point.point.positions[1] = initial_qpos["r_ur5_arm_wrist_3_joint"]
+        # joint_point = JointTrajRequest()
+        # joint_point.point.positions = [None] * 6
+        # joint_point.point.positions[0] = initial_qpos["r_ur5_arm_shoulder_pan_joint"]
+        # joint_point.point.positions[1] = initial_qpos["r_ur5_arm_shoulder_lift_joint"]
+        # joint_point.point.positions[2] = initial_qpos["r_ur5_arm_elbow_joint"]
+        # joint_point.point.positions[3] = initial_qpos["r_ur5_arm_wrist_1_joint"]
+        # joint_point.point.positions[4] = initial_qpos["r_ur5_arm_wrist_2_joint"]
+        # joint_point.point.positions[5] = initial_qpos["r_ur5_arm_wrist_3_joint"]
 
-        result = self.joint_traj_client(joint_point)
+        # result = self.joint_traj_client(joint_point)
 
         return True
 
@@ -170,7 +184,6 @@ class RobotROSEnv(gym.Env):
         gripper_rpy = self.ee_rpy_client(gripper_rpy_req)
 
         return gripper_rpy
-
 
 
     # Env methods
